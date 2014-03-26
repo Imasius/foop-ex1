@@ -22,8 +22,11 @@ public class MouseServer {
     private final short port;
     private ServerSocket serverSocket;
 
+    private final Broadcaster broadcaster;
+
     public MouseServer(short port) {
         this.port = port;
+        broadcaster = new Broadcaster();
     }
 
     public void start() {
@@ -39,6 +42,8 @@ public class MouseServer {
 
         ClientListener clientListener = new ClientListener(serverSocket);
         clientListener.start();
+
+        broadcaster.start();
     }
 
     public void stop() {
@@ -48,5 +53,7 @@ public class MouseServer {
         } catch (IOException ex) {
             log.warn("Exception while closing the ServerSocket.", ex);
         }
+
+        broadcaster.stop();
     }
 }
