@@ -46,6 +46,7 @@ public class ClientListener extends Thread {
         } catch (IOException e) {
             executorService.shutdown();
 
+            log.debug("Shutting down all client connections. Currently {} clients.", clientList.size());
             for (Socket client : clientList) {
                 try { client.close(); } catch (IOException ex) { /* ignored */ }
             }
