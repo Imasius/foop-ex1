@@ -20,7 +20,8 @@ public class StandaloneServer {
         log.info("Starting mouse server in standalone version");
 
         MouseServer server = new MouseServer();
-        server.start();
+        if (!server.start())
+            return;
 
         log.info("Press any key to shutdown the standalone server");
 

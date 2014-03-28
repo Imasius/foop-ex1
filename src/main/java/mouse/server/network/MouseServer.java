@@ -27,7 +27,10 @@ public class MouseServer {
         broadcaster = new Broadcaster(serverConfiguration);
     }
 
-    public void start() {
+    /**
+     * @return True if the server startup was successful.
+     */
+    public boolean start() {
         log.info("Starting mouse game server.");
 
         try {
@@ -35,7 +38,7 @@ public class MouseServer {
             log.debug("Server is listening on port {}", serverConfiguration.getServerPort());
         } catch (IOException e) {
             log.error("Unable to create server socket.", e);
-            return;
+            return false;
         }
 
         ClientListener clientListener = new ClientListener(serverSocket);
@@ -43,6 +46,8 @@ public class MouseServer {
 
         if (serverConfiguration.isBroadcastEnabled())
             broadcaster.start();
+
+        return true;
     }
 
     public void stop() {
