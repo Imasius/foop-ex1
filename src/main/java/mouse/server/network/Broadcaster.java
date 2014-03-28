@@ -1,5 +1,6 @@
 package mouse.server.network;
 
+import mouse.server.ServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,22 +16,21 @@ public class Broadcaster {
 
     private static final Logger log = LoggerFactory.getLogger(Broadcaster.class);
 
-    public static final String MULTICAST_ADDRESS = "224.0.100.100";
-    public static final short MULTICAST_PORT = 30331;
+    private final ServerConfiguration serverConfiguration;
 
-    private static final int TASK_INTERVAL = 2000;
+    private Timer timer;
+    private BroadcastTask broadcastTask;
 
-    private final Timer timer;
-    private final BroadcastTask broadcastTask;
-
-    public Broadcaster() {
-        timer = new Timer();
-        broadcastTask = new BroadcastTask(MULTICAST_ADDRESS, MULTICAST_PORT);
+    public Broadcaster(ServerConfiguration serverConfiguration) {
+        this.serverConfiguration = serverConfiguration;
     }
 
     public void start() {
+        timer = new Timer();
+        broadcastTask = new BroadcastTask(serverConfiguration);
+
         log.debug("Starting the task for IP address broadcasting. IP sent is: {}", broadcastTask.getSentAddress());
-        timer.schedule(broadcastTask, 1000, TASK_INTERVAL);
+        timer.schedule(broadcastTask, 1000, serverConfiguration.getMulticastInterval());
     }
 
     public void stop() {

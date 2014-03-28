@@ -1,5 +1,6 @@
 package mouse.server.network;
 
+import mouse.server.ServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,24 +18,21 @@ public class MouseServer {
 
     private static final Logger log = LoggerFactory.getLogger(MouseServer.class);
 
-    public static final short DEFAULT_PORT = 30330;
-
-    private final short port;
     private ServerSocket serverSocket;
-
     private final Broadcaster broadcaster;
+    private final ServerConfiguration serverConfiguration;
 
-    public MouseServer(short port) {
-        this.port = port;
-        broadcaster = new Broadcaster();
+    public MouseServer() {
+        serverConfiguration = ServerConfiguration.load();
+        broadcaster = new Broadcaster(serverConfiguration);
     }
 
     public void start() {
-        log.info("Starting mouse game server. Specified port is {}.", port);
+        log.info("Starting mouse game server.");
 
         try {
-            serverSocket = new ServerSocket(port);
-            log.debug("Server is listening on port {}", port);
+            serverSocket = new ServerSocket(serverConfiguration.getServerPort());
+            log.debug("Server is listening on port {}", serverConfiguration.getServerPort());
         } catch (IOException e) {
             log.error("Unable to create server socket.", e);
             return;
@@ -43,7 +41,8 @@ public class MouseServer {
         ClientListener clientListener = new ClientListener(serverSocket);
         clientListener.start();
 
-        broadcaster.start();
+        if (serverConfiguration.isBroadcastEnabled())
+            broadcaster.start();
     }
 
     public void stop() {
@@ -54,6 +53,7 @@ public class MouseServer {
             log.warn("Exception while closing the ServerSocket.", ex);
         }
 
-        broadcaster.stop();
+        if (serverConfiguration.isBroadcastEnabled())
+            broadcaster.stop();
     }
 }

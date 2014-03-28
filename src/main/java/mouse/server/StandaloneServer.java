@@ -19,7 +19,7 @@ public class StandaloneServer {
     public static void main(String[] args) {
         log.info("Starting mouse server in standalone version");
 
-        MouseServer server = new MouseServer(MouseServer.DEFAULT_PORT);
+        MouseServer server = new MouseServer();
         server.start();
 
         log.info("Press any key to shutdown the standalone server");

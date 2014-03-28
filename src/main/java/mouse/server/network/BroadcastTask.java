@@ -1,5 +1,6 @@
 package mouse.server.network;
 
+import mouse.server.ServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +16,7 @@ public class BroadcastTask extends TimerTask {
 
     private static final Logger log = LoggerFactory.getLogger(BroadcastTask.class);
 
-    private static final short MULTICAST_LISTEN_PORT = 30329;
-
-    private final String multicastAddress;
-    private final short multicastPort;
+    private final ServerConfiguration serverConfiguration;
 
     private DatagramSocket socket;
 
@@ -26,9 +24,8 @@ public class BroadcastTask extends TimerTask {
     private InetAddress groupAddress;
     private DatagramPacket packet;
 
-    public BroadcastTask(String multicastAddress, short multicastPort) {
-        this.multicastAddress = multicastAddress;
-        this.multicastPort = multicastPort;
+    public BroadcastTask(ServerConfiguration serverConfiguration) {
+        this.serverConfiguration = serverConfiguration;
 
         initialize();
     }
@@ -37,25 +34,25 @@ public class BroadcastTask extends TimerTask {
         log.debug("Initializing multicast task for broadcasting the server address.");
 
         try {
-            socket = new DatagramSocket(MULTICAST_LISTEN_PORT);
+            socket = new DatagramSocket(serverConfiguration.getMulticastListenPort());
         } catch (SocketException ex) {
             log.error("Unable to create multicast socket.", ex);
         }
 
         try {
             message = Inet4Address.getLocalHost().getHostAddress().getBytes();
-            groupAddress = InetAddress.getByName(multicastAddress);
+            groupAddress = InetAddress.getByName(serverConfiguration.getMulticastAddress());
         } catch (UnknownHostException ex) {
             log.error("Unable to retrieve address.", ex);
         }
 
-        packet = new DatagramPacket(message, message.length, groupAddress, multicastPort);
+        packet = new DatagramPacket(message, message.length, groupAddress, serverConfiguration.getMulticastPort());
     }
 
     @Override
     public void run() {
         try {
-            socket.send(packet);;
+            socket.send(packet);
         } catch (IOException ex) {
             log.error("Unable to send broadcast.", ex);
         }
