@@ -1,5 +1,12 @@
+# Eclipse
 .project
+.classpath
+.settings/*
+
+# Idea
 .idea
 target
 *.iml
+
+# General
 *~
