@@ -68,10 +68,10 @@ public class MouseCanvas extends Canvas {
 
             public Collection<Pair<Point, Orientation>> getMousePosition() {
                 Collection<Pair<Point, Orientation>> c = new LinkedList<Pair<Point, Orientation>>();
-                c.add(new Pair(new Point(7, 1), Orientation.EAST));
-                c.add(new Pair(new Point(7, 2), Orientation.NORTH));
-                c.add(new Pair(new Point(7, 3), Orientation.WEST));
-                c.add(new Pair(new Point(7, 4), Orientation.SOUTH));
+                c.add(new Pair<Point, Orientation>(new Point(7, 1), Orientation.EAST));
+                c.add(new Pair<Point, Orientation>(new Point(7, 2), Orientation.NORTH));
+                c.add(new Pair<Point, Orientation>(new Point(7, 3), Orientation.WEST));
+                c.add(new Pair<Point, Orientation>(new Point(7, 4), Orientation.SOUTH));
                 return c;
             }
 

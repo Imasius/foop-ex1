@@ -1,6 +1,5 @@
 package mouse.client;
 
-import static com.oracle.nio.BufferSecrets.instance;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import javax.swing.SwingUtilities;
