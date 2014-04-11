@@ -17,7 +17,6 @@ import mouse.shared.Tile;
 public class MouseCanvas extends Canvas {
 
     private BufferStrategy strategy;
-    private Graphics2D g;
     private DrawableLevel level;
 
     {//TODO Remove mockup initializer object
@@ -63,6 +62,7 @@ public class MouseCanvas extends Canvas {
                 c.add(new Point(2, 2));
                 c.add(new Point(4, 4));
                 c.add(new Point(6, 6));
+                c.add(new Point(8, 8));
                 return c;
             }
 
@@ -88,6 +88,7 @@ public class MouseCanvas extends Canvas {
         this.level = level;
     }
 
+
     public void setLevel(DrawableLevel level) {
         this.level = level;
     }
@@ -96,68 +97,46 @@ public class MouseCanvas extends Canvas {
         setVisible(true);
         createBufferStrategy(2);
         strategy = getBufferStrategy();
-        g = (Graphics2D) strategy.getDrawGraphics();
-    }
-
-    public void clear() {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
-    }
-
-    public void refresh() {
-        g = (Graphics2D) strategy.getDrawGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        clear();
-        g.setColor(Color.WHITE);
-        level.draw(g);
-        //TODO: Readd FPS counter and draw
-        /*
-         double fps = ((int) GameLogic.fps * 100) / 100;
-         String message = "FPS:" + fps;
-         g.drawString(message, 0, 20);
-
-         if (SpeedBowlGame.displayedGame != null) {
-         if (SpeedBowlGame.displayedGame.logic.state == GameLogic.State.READY) {
-         message = "READY";
-         g.setFont(new Font("Calibri", Font.PLAIN, 30));
-         g.drawString(message, getWidth() / 2 - 30, getHeight() / 2 - 30);
-         }
-         }
-         */
-        g.dispose();
-        strategy.show();
     }
 
     @Override
-    public void paint(Graphics gg) {
-        super.paint(gg); //To change body of generated methods, choose Tools | Templates.
-        g = (Graphics2D) strategy.getDrawGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        gg.setColor(Color.red);
-        gg.drawRect(10, 50, 100, 100);
-        clear();
-        g.setColor(Color.WHITE);
-        //TODO implement fix level draw
-        level.draw(g);
-        //TODO: Readd FPS counter and draw
-        /*
-         double fps = ((int) GameLogic.fps * 100) / 100;
-         String message = "FPS:" + fps;
-         g.drawString(message, 0, 20);
-
-         if (SpeedBowlGame.displayedGame != null) {
-         if (SpeedBowlGame.displayedGame.logic.state == GameLogic.State.READY) {
-         message = "READY";
-         g.setFont(new Font("Calibri", Font.PLAIN, 30));
-         g.drawString(message, getWidth() / 2 - 30, getHeight() / 2 - 30);
-         }
-         }
-         */
-
-        g.dispose();
-        strategy.show();
+    public void paint(Graphics g) {
+        super.paint(g); //To change body of generated methods, choose Tools | Templates.
+        renderFrame();
     }
 
+
+    private void renderFrame(){
+        Graphics2D g2d = null;
+        try {
+            g2d = (Graphics2D) strategy.getDrawGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                 RenderingHints.VALUE_ANTIALIAS_ON);
+
+            DrawArgs args = new DrawArgs(getWidth(),
+                                         getHeight(),
+                                         g2d);
+
+            level.draw(args);
+
+            /*
+             double fps = ((int) GameLogic.fps * 100) / 100;
+             String message = "FPS:" + fps;
+             g.drawString(message, 0, 20);
+
+             if (SpeedBowlGame.displayedGame != null) {
+             if (SpeedBowlGame.displayedGame.logic.state == GameLogic.State.READY) {
+             message = "READY";
+             g.setFont(new Font("Calibri", Font.PLAIN, 30));
+             g.drawString(message, getWidth() / 2 - 30, getHeight() / 2 - 30);
+             }
+             }
+             */
+        }
+        finally{
+            if (g2d != null) g2d.dispose();
+        }
+
+        strategy.show();
+    }
 }

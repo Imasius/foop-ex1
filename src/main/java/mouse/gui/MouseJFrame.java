@@ -20,13 +20,14 @@ import org.slf4j.LoggerFactory;
 public class MouseJFrame extends JFrame implements KeyListener, ActionListener, MouseListener {
 
     private static final Logger log = LoggerFactory.getLogger(MouseJFrame.class);
-    private MouseCanvas mcCanvas = new MouseCanvas();
+    private MouseCanvas mcCanvas;
 
     public MouseJFrame() {
         log.debug("Initialized MouseJFrame");
         //TODO switch to miglayout and set JFrame size and position
         BorderLayout layout = new BorderLayout();
         setLayout(layout);
+        mcCanvas = new MouseCanvas();
         add(mcCanvas, BorderLayout.CENTER);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 1000);
@@ -84,5 +85,4 @@ public class MouseJFrame extends JFrame implements KeyListener, ActionListener, 
     public void mouseExited(MouseEvent e) {
         //TODO: Implement Mouse exit
     }
-
 }

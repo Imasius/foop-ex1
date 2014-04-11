@@ -16,21 +16,21 @@ public class MouseClient {
     
     public static void main(String[] args) {
         log.debug("Starting up client.");
+
+        MouseClientConfig.INSTANCE.parseCommandLine(args);
+
         //TODO check for appropiate threading/jframe init/responsibilities
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
-                //TODO: Make fullscreen/window switch
-                boolean fullscreen = false;
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                GraphicsDevice[] gs = ge.getScreenDevices();
                 MouseJFrame mjfGameFrame = new MouseJFrame();
-                if (fullscreen) {
+                if (MouseClientConfig.INSTANCE.isFullscreen()) {
+                    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                    GraphicsDevice[] gs = ge.getScreenDevices();
                     gs[0].setFullScreenWindow(mjfGameFrame);
                 } else {
                     mjfGameFrame.setVisible(true);
                 }
-                
             }
         });
     }

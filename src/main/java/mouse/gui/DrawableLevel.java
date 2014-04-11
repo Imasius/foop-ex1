@@ -1,14 +1,18 @@
 package mouse.gui;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 import mouse.server.simulation.Orientation;
 import mouse.shared.Level;
 import mouse.shared.Pair;
 import mouse.shared.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
 
 /**
  * Date 06.04.2014
@@ -17,83 +21,157 @@ import org.slf4j.LoggerFactory;
  */
 public class DrawableLevel implements Drawable {
 
+    static final Color COLOR_BORDER = Color.blue;
+    static final Color COLOR_EMPTY = Color.white;
+    static final Color COLOR_DOOR_CLOSED = Color.lightGray;
+    static final Color COLOR_DOOR_OPEN = Color.gray;
+    static final Color COLOR_WALL = Color.black;
+    static final int BORDER_WIDTH = 0;
+    static final int MOUSE_MARGIN = 2;
+    static final int BAIT_MARGIN = 3;
+    static final int START_MARGIN = 1;
+
     private static final Logger log = LoggerFactory.getLogger(DrawableLevel.class);
     //TODO fix visibility
     Level level;
-    public int width;
-    public int height;
+    BufferedImage imgBait;
+    Image[] imgPlayerMouse;
+    Image[] imgPlayerStart;
 
     public DrawableLevel(Level level) {
         this.level = level;
+
+        BufferedImage imgMouse = null;
+        BufferedImage imgStart = null;
+
+        try {
+            imgMouse = ImageIO.read(ClassLoader.getSystemResource("images/mouse.gif"));
+            imgStart = ImageIO.read(ClassLoader.getSystemResource("images/start.gif"));
+            this.imgBait = ImageIO.read(ClassLoader.getSystemResource("images/bait.gif"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        Color[] playerColors = new Color[]
+                {
+                    Color.red,
+                    Color.green,
+                    Color.blue,
+                    Color.yellow
+                };
+
+        this.imgPlayerMouse = new Image[playerColors.length];
+        this.imgPlayerStart = new Image[playerColors.length];
+        for (int i = 0 ; i < playerColors.length; i ++){
+            this.imgPlayerMouse[i] = ImageBlender.blend(imgMouse, playerColors[i],0.5);
+            this.imgPlayerStart[i] = ImageBlender.blend(imgStart, playerColors[i],0.5);
+        }
     }
 
-    public void draw(Graphics2D g2d) {
-        //Draw all tiles (~Background)        
-        g2d.setColor(Color.blue);
-        g2d.drawLine(20 * level.getHeight(), 0, 20 * level.getWidth(), 20 * level.getHeight());
-        g2d.drawLine(0, 0, 20 * level.getWidth(), 0);
-        g2d.drawLine(0, 0, 0, 20 * level.getHeight());
-        g2d.drawLine(20 * level.getWidth(), 0, 20 * level.getWidth(), 20 * level.getWidth());
+    public void draw(DrawArgs args) {
+        int tileWidth = args.wndWidth/level.getWidth();
+        int tileHeight = args.wndHeight/level.getHeight();
 
-        //TODO: Remove dummy draw
-        for (int x = 0; x < level.getWidth(); x++) {
-            for (int y = 0; y < level.getHeight(); y++) {
-                Tile t = level.tileAt(x, y);
-                g2d.setColor(Color.pink);
-                g2d.drawRect(x * 20, y * 20, 20, 20);
-                //TODO: draw Tile
-                //TODO replace with image loading and image drawing
+        int tileContentWidth = tileWidth - 2*BORDER_WIDTH;
+        int tileContentHeight = tileHeight - 2*BORDER_WIDTH;
+
+        double mouseWidth  = tileContentWidth - 2*MOUSE_MARGIN;
+        double mouseHeight = tileContentHeight - 2*MOUSE_MARGIN;
+
+        int mouseImgWidth = imgPlayerMouse[0].getWidth(null);
+        int mouseImgHeight = imgPlayerMouse[0].getHeight(null);
+
+        double baitWidth  = tileContentWidth - 2*BAIT_MARGIN;
+        double baitHeight = tileContentHeight - 2*BAIT_MARGIN;
+
+        int baitImgWidth = imgBait.getWidth(null);
+        int baitImgHeight = imgBait.getHeight(null);
+
+        double startWidth  = tileContentWidth - 2*START_MARGIN;
+        double startHeight = tileContentHeight - 2*START_MARGIN;
+
+        int startImgWidth = imgPlayerStart[0].getWidth(null);
+        int startImgHeight = imgPlayerStart[0].getHeight(null);
+
+        // draw border-color to background. tiles will leave border-areas out to show background.
+        args.g2d.setColor(COLOR_BORDER);
+        args.g2d.fillRect(0,0,tileWidth*level.getWidth(), tileHeight*level.getHeight());
+
+        // draw tiles
+        for (int y = 0; y < level.getHeight(); y++) {
+            for (int x = 0; x < level.getWidth(); x++) {
+                Tile t = level.tileAt(x,y);
+
                 switch (t) {
-                    case EMPTY:
-                        g2d.setColor(Color.LIGHT_GRAY);
-                        break;
-                    case DOOR_CLOSED:
-                        g2d.setColor(Color.ORANGE);
-                        break;
-                    case DOOR_OPEN:
-                        g2d.setColor(Color.GREEN);
-                        break;
-                    case WALL:
-                        g2d.setColor(Color.DARK_GRAY);
-                        break;
+                    case EMPTY:         args.g2d.setColor(COLOR_EMPTY);         break;
+                    case DOOR_CLOSED:   args.g2d.setColor(COLOR_DOOR_CLOSED);   break;
+                    case DOOR_OPEN:     args.g2d.setColor(COLOR_DOOR_OPEN);     break;
+                    case WALL:          args.g2d.setColor(COLOR_WALL);          break;
                 }
-                g2d.fillRect(x * 20 + 1, y * 20 + 1, 19, 19);
-            }
-        }
-        //Draw startpositions
-        for (Point p : level.getStartpositions()) {
-            //TODO: draw startpositions
-        }
-        //Draw Bait
-        level.getBaitPosition();
-        //TODO: drawBait
 
-        //Draw mice
-        g2d.setColor(Color.GREEN);
-        for (Pair<Point, Orientation> m : level.getMousePosition()) {
-            int x = m.first.x;
-            int y = m.first.y;
-            //TODO: draw Tile
-            //TODO replace with image loading and image drawing
-            switch (m.second) {
-                case EAST:
-                    g2d.fillRect(x * 20, y * 20 + 5, 15, 10);
-                    g2d.fillOval(x * 20 + 15, y * 20 + 7, 5, 5);
-                    break;
-                case NORTH:
-                    g2d.fillRect(x * 20 + 5, y * 20 + 5, 10, 15);
-                    g2d.fillOval(x * 20 + 7, y * 20, 5, 5);
-                    break;
-                case SOUTH:
-                    g2d.fillRect(x * 20 + 5, y * 20, 10, 15);
-                    g2d.fillOval(x * 20 + 7, y * 20 + 15, 5, 5);
-                    break;
-                case WEST:
-                    g2d.fillRect(x * 20 + 5, y * 20 + 5, 15, 10);
-                    g2d.fillOval(x * 20, y * 20 + 7, 5, 5);
-                    break;
+                args.g2d.fillRect(x*tileWidth  + BORDER_WIDTH,
+                                  y*tileHeight + BORDER_WIDTH,
+                                  tileContentWidth,
+                                  tileContentHeight);
             }
+        }
+
+        // draw starts
+        int i = 0;
+        for (Point pos : level.getStartpositions()){
+
+            AffineTransform tform = new AffineTransform();
+
+            tform.translate(pos.getX() * tileWidth + START_MARGIN,
+                            pos.getY() * tileHeight + START_MARGIN);
+
+            tform.scale((startWidth) / startImgWidth,
+                        (startHeight) / startImgHeight);
+
+            args.g2d.drawImage(imgPlayerStart[i++], tform, null);
+        }
+
+        // draw bait
+        {
+            AffineTransform tform = new AffineTransform();
+
+            tform.translate(level.getBaitPosition().getX() * tileWidth + BAIT_MARGIN,
+                            level.getBaitPosition().getY() * tileHeight + BAIT_MARGIN);
+
+            tform.scale((baitWidth)  / baitImgWidth,
+                        (baitHeight) / baitImgHeight);
+
+            args.g2d.drawImage(imgBait, tform, null);
+        }
+
+        // draw mice
+        i = 0;
+        for (Pair<Point,Orientation> mouse : level.getMousePosition()){
+
+            AffineTransform tform = new AffineTransform();
+
+            tform.translate(mouse.first.getX() * tileWidth + MOUSE_MARGIN,
+                            mouse.first.getY() * tileHeight + MOUSE_MARGIN);
+
+            tform.scale((mouseWidth)  / mouseImgWidth,
+                        (mouseHeight) / mouseImgHeight);
+
+            tform.translate(0.5*mouseImgWidth,
+                            0.5*mouseImgHeight);
+
+            switch(mouse.second){
+                case NORTH: tform.scale(-1,1); tform.rotate(Math.toRadians(90)); break;
+                case EAST:  tform.scale(-1,1); break;
+                case SOUTH: tform.rotate(Math.toRadians(270)); break;
+                case WEST:  tform.rotate(0); break;
+            }
+
+            tform.translate(-0.5*mouseImgWidth,
+                            -0.5*mouseImgHeight);
+
+            args.g2d.drawImage(imgPlayerMouse[i++], tform, null);
         }
     }
-
 }
