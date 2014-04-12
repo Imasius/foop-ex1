@@ -1,10 +1,13 @@
-package mouse.gui;
+package mouse.client.gui;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import mouse.client.data.ClientLevel;
+import mouse.client.gui.helper.ImageBlender;
+import mouse.client.network.ServerConnectionObserver;
 import mouse.server.simulation.Orientation;
 import mouse.shared.Level;
 import mouse.shared.Pair;
@@ -19,7 +22,7 @@ import javax.imageio.ImageIO;
  *
  * @author Kevin Streicher <e1025890@student.tuwien.ac.at>
  */
-public class DrawableLevel implements Drawable {
+public class LevelDrawer implements Drawable, ServerConnectionObserver {
 
     static final Color COLOR_BORDER = Color.blue;
     static final Color COLOR_EMPTY = Color.white;
@@ -31,14 +34,14 @@ public class DrawableLevel implements Drawable {
     static final int BAIT_MARGIN = 3;
     static final int START_MARGIN = 1;
 
-    private static final Logger log = LoggerFactory.getLogger(DrawableLevel.class);
+    private static final Logger log = LoggerFactory.getLogger(LevelDrawer.class);
     //TODO fix visibility
-    Level level;
+    ClientLevel level;
     BufferedImage imgBait;
     Image[] imgPlayerMouse;
     Image[] imgPlayerStart;
 
-    public DrawableLevel(Level level) {
+    public LevelDrawer(ClientLevel level) {
         this.level = level;
 
         BufferedImage imgMouse = null;
@@ -65,8 +68,8 @@ public class DrawableLevel implements Drawable {
         this.imgPlayerMouse = new Image[playerColors.length];
         this.imgPlayerStart = new Image[playerColors.length];
         for (int i = 0 ; i < playerColors.length; i ++){
-            this.imgPlayerMouse[i] = ImageBlender.blend(imgMouse, playerColors[i],0.5);
-            this.imgPlayerStart[i] = ImageBlender.blend(imgStart, playerColors[i],0.5);
+            this.imgPlayerMouse[i] = ImageBlender.blend(imgMouse, playerColors[i], 0.5);
+            this.imgPlayerStart[i] = ImageBlender.blend(imgStart, playerColors[i], 0.5);
         }
     }
 
@@ -163,7 +166,7 @@ public class DrawableLevel implements Drawable {
 
             switch(mouse.second){
                 case NORTH: tform.scale(-1,1); tform.rotate(Math.toRadians(90)); break;
-                case EAST:  tform.scale(-1,1); break;
+                case EAST:  tform.scale(-1, 1); break;
                 case SOUTH: tform.rotate(Math.toRadians(270)); break;
                 case WEST:  tform.rotate(0); break;
             }
@@ -173,5 +176,22 @@ public class DrawableLevel implements Drawable {
 
             args.g2d.drawImage(imgPlayerMouse[i++], tform, null);
         }
+    }
+
+    @Override
+    public void onMouseMoved(int mouseIdx, Point newPosition) {
+
+    }
+    @Override
+    public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
+
+    }
+    @Override
+    public void onGameOver() {
+
+    }
+    @Override
+    public void onGameStart(Level level) {
+
     }
 }

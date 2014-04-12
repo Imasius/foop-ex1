@@ -1,21 +1,25 @@
-package mouse.client;
+package mouse.client.cfg;
 
 import java.util.*;
 
 /**
  * Created by Florian on 2014-04-11.
  */
-public class MouseClientConfig {
+public class ClientConfiguration {
     private boolean isFullscreen;
+    private short multicastPort;
 
-    public MouseClientConfig() {
+    public ClientConfiguration() {
         this.isFullscreen = false;
+        this.multicastPort = 30332;
     }
 
     public boolean isFullscreen() {
         return isFullscreen;
     }
-
+    public short getMulticastPort() {
+        return multicastPort;
+    }
 
     public void parseCommandLine(String[] args){
         Dictionary<String, List<String>> cmds = new Hashtable<String, List<String>>();
@@ -46,11 +50,14 @@ public class MouseClientConfig {
             if (cmds.get("windowed") != null){
                 isFullscreen = false;
             }
+            if (cmds.get("multicast-port") != null){
+                multicastPort = Short.parseShort(cmds.get("multicast-port").get(0));
+            }
         }
     }
 
 
 
     // if nothing else specified load default config
-    public static final MouseClientConfig INSTANCE = new MouseClientConfig();
+    public static final ClientConfiguration INSTANCE = new ClientConfiguration();
 }

@@ -1,4 +1,4 @@
-package mouse.gui;
+package mouse.client.gui;
 
 import java.awt.*;
 

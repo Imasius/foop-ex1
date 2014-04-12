@@ -1,6 +1,4 @@
-package mouse.gui;
-
-import java.awt.Graphics2D;
+package mouse.client.gui;
 
 /**
  * Date: 06.04.2014

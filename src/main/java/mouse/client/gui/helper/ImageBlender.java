@@ -1,15 +1,13 @@
-package mouse.gui;
+package mouse.client.gui.helper;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 
 /**
  * Created by Florian on 2014-04-11.
  */
 public class ImageBlender {
-    static BufferedImage blend(BufferedImage src, Color color, double t){
+    public static BufferedImage blend(BufferedImage src, Color color, double t){
         BufferedImage dst = createCopy(src);
         double[] pixel = new double[4];
         double[] blendColor = new double[4];

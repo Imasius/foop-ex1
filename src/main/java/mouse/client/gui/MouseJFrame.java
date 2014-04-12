@@ -1,14 +1,17 @@
-package mouse.gui;
+package mouse.client.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JFrame;
+import javax.swing.*;
+
+import mouse.client.network.ServerConnection;
+import mouse.client.network.ServerConnectionObserver;
+import mouse.shared.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +24,25 @@ public class MouseJFrame extends JFrame implements KeyListener, ActionListener, 
 
     private static final Logger log = LoggerFactory.getLogger(MouseJFrame.class);
     private MouseCanvas mcCanvas;
+    private ServerConnection connection;
 
-    public MouseJFrame() {
+    public MouseJFrame(ServerConnection connection) {
         log.debug("Initialized MouseJFrame");
+
+        this.connection = connection;
+        this.connection.addObserver(mcCanvas.getLevel());
+        this.connection.addObserver(new ServerConnectionObserver() {
+            @Override public void onMouseMoved(int mouseIdx, Point newPosition) {}              // handled by level
+            @Override public void onDoorStateChanged(Point doorPosition, boolean isClosed) {}   // handled by level
+            @Override public void onGameStart(Level level) {}                                   // handled by level
+
+            @Override
+            public void onGameOver() {
+                JOptionPane.showMessageDialog(null, "Game over");
+            }
+        });
+        new Thread(this.connection).start();
+
         //TODO switch to miglayout and set JFrame size and position
         BorderLayout layout = new BorderLayout();
         setLayout(layout);
