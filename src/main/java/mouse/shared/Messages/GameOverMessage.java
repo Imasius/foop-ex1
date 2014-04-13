@@ -1,6 +1,5 @@
 package mouse.shared.Messages;
 
-import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -11,8 +10,8 @@ public class GameOverMessage extends Message implements Serializable {
     }
 
     @Override
-    protected void alertObservers(Iterable<MessageObserver> observers) {
-        for (MessageObserver observer : observers)
+    protected void alertListeners(Iterable<MessageListener> observers) {
+        for (MessageListener observer : observers)
             observer.onGameOver();
     }
 }

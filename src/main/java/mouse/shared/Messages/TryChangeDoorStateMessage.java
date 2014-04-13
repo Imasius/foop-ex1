@@ -4,27 +4,27 @@ import java.awt.*;
 import java.io.Serializable;
 
 /**
- * Created by Florian on 2014-04-12.
+ * Created by Florian on 2014-04-13.
  */
-public class DoorStateChangedMessage extends Message implements Serializable {
+public class TryChangeDoorStateMessage extends Message implements Serializable {
     private Point doorPosition;
-    private boolean isClosed;
+    private boolean tryClose;
 
-    public DoorStateChangedMessage(Point doorPosition, boolean isClosed) {
+    public TryChangeDoorStateMessage(Point doorPosition, boolean tryClose) {
         this.doorPosition = doorPosition;
-        this.isClosed = isClosed;
+        this.tryClose = tryClose;
     }
 
     public Point getDoorPosition() {
         return doorPosition;
     }
-    public boolean isClosed() {
-        return isClosed;
+    public boolean tryClose() {
+        return tryClose;
     }
 
     @Override
     protected void alertListeners(Iterable<MessageListener> observers) {
         for (MessageListener observer : observers)
-            observer.onDoorStateChanged(doorPosition, isClosed);
+            observer.onTryChangeDoorState(doorPosition, tryClose);
     }
 }

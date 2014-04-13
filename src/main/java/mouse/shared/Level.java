@@ -21,7 +21,7 @@ public interface Level {
 
     public Point getBaitPosition();
 
-    public Collection<Point> getStartpositions();
+    public Collection<Point> getStartPositions();
 
-    public Collection<Pair<Point, Orientation>> getMousePosition();
+    public Collection<MouseState> getMice();
 }

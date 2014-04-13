@@ -1,8 +1,10 @@
 package mouse.client.network;
 
-import mouse.shared.Level;
-import mouse.shared.Messages.MessageObserver;
+import mouse.shared.Messages.MessageListener;
 import mouse.shared.Messages.MessageParser;
+import mouse.shared.Messages.TryChangeDoorStateMessage;
+import mouse.shared.MouseState;
+import mouse.shared.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,50 +22,54 @@ public class ServerConnection implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
     private final ServerInfo serverInfo;
-    private final List<ServerConnectionObserver> observers;
+    private final List<ServerConnectionListener> listeners;
     private final MessageParser msgParser;
+    private Socket socket;
 
 
     public ServerConnection(ServerInfo serverInfo){
         this.serverInfo = serverInfo;
         this.msgParser = new MessageParser();
-        this.observers = new ArrayList<ServerConnectionObserver>();
+        this.listeners = new ArrayList<ServerConnectionListener>();
 
-        this.msgParser.addObserver(new MessageObserver() {
+        this.msgParser.addListener(new MessageListener() {
             @Override
-            public void onMouseMoved(int mouseIdx, Point newPosition) {
-                for (ServerConnectionObserver observer : observers)
-                    observer.onMouseMoved(mouseIdx, newPosition);
+            public void onMouseMoved(int mouseIdx, MouseState newState) {
+                for (ServerConnectionListener listener : listeners)
+                    listener.onMouseMoved(mouseIdx, newState);
             }
             @Override
             public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
-                for (ServerConnectionObserver observer : observers)
-                    observer.onDoorStateChanged(doorPosition, isClosed);
+                for (ServerConnectionListener listener : listeners)
+                    listener.onDoorStateChanged(doorPosition, isClosed);
             }
             @Override
             public void onGameOver() {
-                for (ServerConnectionObserver observer : observers)
-                    observer.onGameOver();
+                for (ServerConnectionListener listener : listeners)
+                    listener.onGameOver();
             }
             @Override
-            public void onGameStart(Level level) {
-                for (ServerConnectionObserver observer : observers)
-                    observer.onGameStart(level);
+            public void onTryChangeDoorState(Point doorPosition, boolean tryClose) {
+                log.error("Received illegal message.");
+                System.exit(1);
+            }
+            @Override
+            public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+                for (ServerConnectionListener listener : listeners)
+                    listener.onGameStart(tiles, baitPosition, startPositions, mice);
             }
         });
     }
 
-    public void addObserver(ServerConnectionObserver observer) {
-        observers.add(observer);
+    public void addListener(ServerConnectionListener listener) {
+        listeners.add(listener);
     }
-    public void removeObserver(ServerConnectionObserver observer) {
-        observers.remove(observer);
+    public void removeListener(ServerConnectionListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
     public void run() {
-        Socket socket = null;
-
         try {
             socket = new Socket(serverInfo.getAddress(), 30330);
         } catch (IOException ex) {
@@ -78,6 +85,16 @@ public class ServerConnection implements Runnable {
         } catch (IOException e) {
             log.debug("Shutting down connection.");
             try { socket.close(); } catch (IOException ex) { }
+            socket = null;
+        }
+    }
+
+    public void tryChangeDoorState(Point doorPosition, boolean tryClose){
+        try {
+            new TryChangeDoorStateMessage(doorPosition, tryClose).writeToStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            log.error("Unable to send message.", ex);
+            System.exit(1);
         }
     }
 }

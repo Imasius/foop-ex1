@@ -13,20 +13,20 @@ import java.util.List;
 public class MessageParser {
     private static final Logger log = LoggerFactory.getLogger(MessageParser.class);
 
-    private final List<MessageObserver> observers;
+    private final List<MessageListener> listeners;
 
     public MessageParser(){
-        this.observers = new ArrayList<MessageObserver>();
+        this.listeners = new ArrayList<MessageListener>();
     }
 
-    public void addObserver(MessageObserver observer) {
-        observers.add(observer);
+    public void addListener(MessageListener listener) {
+        listeners.add(listener);
     }
-    public void removeObserver(MessageObserver observer) {
-        observers.remove(observer);
+    public void removeListener(MessageListener listener) {
+        listeners.remove(listener);
     }
 
     public void parseMessage(InputStream stream){
-        Message.fromStream(stream).alertObservers(this.observers);
+        Message.fromStream(stream).alertListeners(this.listeners);
     }
 }

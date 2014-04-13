@@ -20,10 +20,10 @@ public class MouseClient {
         ClientConfiguration.INSTANCE.parseCommandLine(args);
 
         BroadcastReceiver receiver = new BroadcastReceiver(ClientConfiguration.INSTANCE);
-        receiver.addObserver(new BroadcastReceiverObserver() {
+        receiver.addListener(new BroadcastReceiverListener() {
             @Override
             public void onServerFound(ServerInfo info) {
-                SwingUtilities.invokeLater( new GuiTask(new ServerConnection(info)) );
+                SwingUtilities.invokeLater(new GuiTask(new ServerConnection(info)));
             }
         });
         SwingUtilities.invokeLater(receiver);

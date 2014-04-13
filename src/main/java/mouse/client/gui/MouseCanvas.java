@@ -1,43 +1,79 @@
 package mouse.client.gui;
 
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
+import java.util.*;
+import java.util.List;
 
 import mouse.client.data.ClientLevel;
+import mouse.shared.Tile;
 
 public class MouseCanvas extends Canvas {
+    class LocalMouseListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Point tilePos = levelDrawer.mousePositionToTilePosition(getWidth(), getHeight(), e.getPoint());
+
+            if (tilePos == null)
+                return;
+
+            Tile tile = level.tileAt((int)tilePos.getX(), (int)tilePos.getY());
+
+            if (!Tile.isDoor(tile))
+                return;
+
+            for(MouseCanvasListener listener : listeners)
+                listener.onDoorClicked(tilePos, tile == Tile.DOOR_CLOSED);
+        }
+
+        @Override public void mousePressed(MouseEvent e) { } // ignored
+        @Override public void mouseReleased(MouseEvent e) { } // ignored
+        @Override public void mouseEntered(MouseEvent e) { } // ignored
+        @Override public void mouseExited(MouseEvent e) { } // ignored
+    }
 
     private BufferStrategy strategy;
-    private LevelDrawer levelDrawer;
-    private ClientLevel level;
+    private final LevelDrawer levelDrawer;
+    private final ClientLevel level;
+    private final List<MouseCanvasListener> listeners;
+
+
 
     //TODO set IgnoreRepaint to true
     public MouseCanvas() {
-        level = new ClientLevel();
-        levelDrawer = new LevelDrawer(level);
+        this.level = new ClientLevel();
+        this.levelDrawer = new LevelDrawer(this.level);
+        this.listeners = new ArrayList<MouseCanvasListener>();
         setIgnoreRepaint(false);
+
+        this.addMouseListener(new LocalMouseListener());
     }
 
     public ClientLevel getLevel() {
-        return level;
+        return this.level;
     }
+
+
+    public void addListener(MouseCanvasListener listener){
+        this.listeners.add(listener);
+    }
+    public void removeListener(MouseCanvasListener listener){
+        this.listeners.remove(listener);
+    }
+
 
     public void init() {
         setVisible(true);
         createBufferStrategy(2);
-        strategy = getBufferStrategy();
+        this.strategy = getBufferStrategy();
     }
-
     @Override
     public void paint(Graphics g) {
         super.paint(g); //To change body of generated methods, choose Tools | Templates.
         renderFrame();
     }
-
-
     private void renderFrame(){
         Graphics2D g2d = null;
         try {

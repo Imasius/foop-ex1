@@ -7,10 +7,7 @@ import java.io.IOException;
 
 import mouse.client.data.ClientLevel;
 import mouse.client.gui.helper.ImageBlender;
-import mouse.client.network.ServerConnectionObserver;
-import mouse.server.simulation.Orientation;
-import mouse.shared.Level;
-import mouse.shared.Pair;
+import mouse.shared.MouseState;
 import mouse.shared.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,7 @@ import javax.imageio.ImageIO;
  *
  * @author Kevin Streicher <e1025890@student.tuwien.ac.at>
  */
-public class LevelDrawer implements Drawable, ServerConnectionObserver {
+public class LevelDrawer implements Drawable {
 
     static final Color COLOR_BORDER = Color.blue;
     static final Color COLOR_EMPTY = Color.white;
@@ -123,7 +120,7 @@ public class LevelDrawer implements Drawable, ServerConnectionObserver {
 
         // draw starts
         int i = 0;
-        for (Point pos : level.getStartpositions()){
+        for (Point pos : level.getStartPositions()){
 
             AffineTransform tform = new AffineTransform();
 
@@ -151,12 +148,12 @@ public class LevelDrawer implements Drawable, ServerConnectionObserver {
 
         // draw mice
         i = 0;
-        for (Pair<Point,Orientation> mouse : level.getMousePosition()){
+        for (MouseState mouse : level.getMice()){
 
             AffineTransform tform = new AffineTransform();
 
-            tform.translate(mouse.first.getX() * tileWidth + MOUSE_MARGIN,
-                            mouse.first.getY() * tileHeight + MOUSE_MARGIN);
+            tform.translate(mouse.getPosition().getX() * tileWidth + MOUSE_MARGIN,
+                            mouse.getPosition().getY() * tileHeight + MOUSE_MARGIN);
 
             tform.scale((mouseWidth)  / mouseImgWidth,
                         (mouseHeight) / mouseImgHeight);
@@ -164,7 +161,7 @@ public class LevelDrawer implements Drawable, ServerConnectionObserver {
             tform.translate(0.5*mouseImgWidth,
                             0.5*mouseImgHeight);
 
-            switch(mouse.second){
+            switch(mouse.getOrientation()){
                 case NORTH: tform.scale(-1,1); tform.rotate(Math.toRadians(90)); break;
                 case EAST:  tform.scale(-1, 1); break;
                 case SOUTH: tform.rotate(Math.toRadians(270)); break;
@@ -178,20 +175,18 @@ public class LevelDrawer implements Drawable, ServerConnectionObserver {
         }
     }
 
-    @Override
-    public void onMouseMoved(int mouseIdx, Point newPosition) {
+    public Point mousePositionToTilePosition(int wndWidth, int wndHeight, Point mousePos) {
+        int tileWidth = wndWidth/level.getWidth();
+        int tileHeight = wndHeight/level.getHeight();
 
-    }
-    @Override
-    public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
+        int x = (int)Math.floor(mousePos.getX() / tileWidth);
+        int y = (int)Math.floor(mousePos.getY() / tileHeight);
 
-    }
-    @Override
-    public void onGameOver() {
+        if (x < 0 || x >= level.getWidth())
+            return null;
+        if (y < 0 || y >= level.getHeight())
+            return null;
 
-    }
-    @Override
-    public void onGameStart(Level level) {
-
+        return new Point(x,y);
     }
 }

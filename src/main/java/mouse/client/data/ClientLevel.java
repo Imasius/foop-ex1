@@ -1,9 +1,9 @@
 package mouse.client.data;
 
-import mouse.client.network.ServerConnectionObserver;
+import mouse.client.network.ServerConnectionListener;
 import mouse.server.simulation.Orientation;
 import mouse.shared.Level;
-import mouse.shared.Pair;
+import mouse.shared.MouseState;
 import mouse.shared.Tile;
 
 import java.awt.*;
@@ -13,11 +13,11 @@ import java.util.Collection;
 /**
  * Created by Florian on 2014-04-12.
  */
-public class ClientLevel implements Level, ServerConnectionObserver {
+public class ClientLevel implements Level, ServerConnectionListener {
     Tile[][] tiles;
     Point baitPosition;
-    ArrayList<Point> startPositions;
-    ArrayList<Pair<Point,Orientation>> mousePositions;
+    Collection<Point> startPositions;
+    ArrayList<MouseState> mice;
 
     public ClientLevel(){
         startPositions = new ArrayList<Point>();
@@ -42,11 +42,11 @@ public class ClientLevel implements Level, ServerConnectionObserver {
         tiles[4][4] = Tile.DOOR_CLOSED;
         tiles[10][4] = Tile.DOOR_OPEN;
 
-        mousePositions = new ArrayList<Pair<Point, Orientation>>();
-        mousePositions.add(new Pair<Point, Orientation>(new Point(7, 1), Orientation.EAST));
-        mousePositions.add(new Pair<Point, Orientation>(new Point(7, 2), Orientation.NORTH));
-        mousePositions.add(new Pair<Point, Orientation>(new Point(7, 3), Orientation.WEST));
-        mousePositions.add(new Pair<Point, Orientation>(new Point(7, 4), Orientation.SOUTH));
+        mice = new ArrayList<MouseState>();
+        mice.add(new MouseState(new Point(7, 1), Orientation.EAST));
+        mice.add(new MouseState(new Point(7, 2), Orientation.NORTH));
+        mice.add(new MouseState(new Point(7, 3), Orientation.WEST));
+        mice.add(new MouseState(new Point(7, 4), Orientation.SOUTH));
 
         baitPosition = new Point(5, 5);
     }
@@ -68,19 +68,19 @@ public class ClientLevel implements Level, ServerConnectionObserver {
         return baitPosition;
     }
     @Override
-    public Collection<Point> getStartpositions() {
+    public Collection<Point> getStartPositions() {
         return startPositions;
     }
     @Override
-    public Collection<Pair<Point, Orientation>> getMousePosition() {
-        return mousePositions;
+    public Collection<MouseState> getMice() {
+        return mice;
     }
 
 
 
     @Override
-    public void onMouseMoved(int mouseIdx, Point newPosition) {
-        mousePositions.get(mouseIdx).first = newPosition;
+    public void onMouseMoved(int mouseIdx, MouseState newState) {
+        mice.set(mouseIdx, newState);
     }
     @Override
     public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
@@ -92,7 +92,11 @@ public class ClientLevel implements Level, ServerConnectionObserver {
         // handled by MouseJFrame
     }
     @Override
-    public void onGameStart(Level level) {
-        // TODO: init level
+    public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+        this.tiles = tiles;
+        this.baitPosition = baitPosition;
+        this.startPositions = startPositions;
+        this.mice.clear();
+        this.mice.addAll(mice);
     }
 }

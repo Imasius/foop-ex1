@@ -16,18 +16,18 @@ public class BroadcastReceiver implements Runnable  {
     private static final Logger log = LoggerFactory.getLogger(BroadcastReceiver.class);
 
     private final ClientConfiguration clientConfiguration;
-    private final List<BroadcastReceiverObserver> observers;
+    private final List<BroadcastReceiverListener> listeners;
 
     public BroadcastReceiver(ClientConfiguration clientConfiguration) {
         this.clientConfiguration = clientConfiguration;
-        this.observers = new ArrayList<BroadcastReceiverObserver>();
+        this.listeners = new ArrayList<BroadcastReceiverListener>();
     }
 
-    public void addObserver(BroadcastReceiverObserver observer) {
-        observers.add(observer);
+    public void addListener(BroadcastReceiverListener listener) {
+        listeners.add(listener);
     }
-    public void removeObserver(BroadcastReceiverObserver observer) {
-        observers.remove(observer);
+    public void removeListener(BroadcastReceiverListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class BroadcastReceiver implements Runnable  {
 
         ServerInfo serverInfo = new ServerInfo(address);
 
-        for (BroadcastReceiverObserver observer : observers)
-            observer.onServerFound(serverInfo);
+        for (BroadcastReceiverListener listener : listeners)
+            listener.onServerFound(serverInfo);
     }
 }
