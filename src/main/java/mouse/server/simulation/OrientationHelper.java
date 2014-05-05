@@ -13,6 +13,26 @@ public class OrientationHelper {
 	public static OrientationHelper getInstance() {
 		return instance;
 	}
+	
+	/**
+	 * Moves Point one field in specified direction
+	 * @param position
+	 * @param direction
+	 * @return moved Point
+	 */
+	public Point applyOrientation(Point position, Orientation direction) {
+		switch (direction) {
+		case NORTH:
+			 return new Point(position.x, position.y -1);
+		case SOUTH:
+			return new Point(position.x, position.y +1);
+		case EAST:
+			return new Point(position.x +1, position.y);
+		case WEST:
+			return new Point(position.x -1, position.y);
+		}
+		throw new IllegalArgumentException("Unsupported direction!");
+	}
 
 	/**
 	 * Gives a List that contains all cardinal directions, that lead from start to dest

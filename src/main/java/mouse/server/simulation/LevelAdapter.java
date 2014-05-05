@@ -28,23 +28,9 @@ public class LevelAdapter {
 	public Level getLevel() {
 		return level;
 	}
-	
-	private Point applyOrientation(Point position, Orientation direction) {
-		switch (direction) {
-		case NORTH:
-			 return new Point(position.x, position.y -1);
-		case SOUTH:
-			return new Point(position.x, position.y +1);
-		case EAST:
-			return new Point(position.x +1, position.y);
-		case WEST:
-			return new Point(position.x -1, position.y);
-		}
-		throw new IllegalArgumentException("Unsupported direction!");
-	}
 
 	public boolean isDirectionFeasible(Point position, Orientation direction) {
-		Point checkedPosition = applyOrientation(position, direction);
+		Point checkedPosition = OrientationHelper.getInstance().applyOrientation(position, direction);
 		
 		if(checkedPosition.x < 0 || checkedPosition.y < 0 || 
 				checkedPosition.x >= level.getWidth() || checkedPosition.y >= level.getHeight()) {

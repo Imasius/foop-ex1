@@ -39,10 +39,8 @@ public class Mouse {
 				}
 			}
 			
-			state = MouseState.MOVING_RANDOM;
-			randomDirection = levelAdapter.getRandomFeasibleDirection(position);
+			confuse();
 			ret = randomDirection;
-			randomCounter = 4;
 			break;
 		case MOVING_RANDOM:
 			if(!levelAdapter.isDirectionFeasible(position, randomDirection)) {
@@ -58,5 +56,19 @@ public class Mouse {
 		}
 		
 		return ret;
+	}
+	
+	public void applyMotion(Orientation direction) {
+		position = OrientationHelper.getInstance().applyOrientation(position, direction);
+	}
+	
+	public Point getPosition() {
+		return position;
+	}
+
+	public void confuse() {
+		state = MouseState.MOVING_RANDOM;
+		randomDirection = levelAdapter.getRandomFeasibleDirection(position);
+		randomCounter = 4;
 	}
 }
