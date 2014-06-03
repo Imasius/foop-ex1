@@ -1,6 +1,7 @@
 package mouse.server.simulation;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,11 +18,13 @@ public class Simulator {
 		this.mice = mice;
 	}
 
-	public void simulate() {
+	public List<mouse.shared.MouseState> simulate() {
 		Set<Mouse> confusedMice = new HashSet<Mouse>();
+		List<mouse.shared.MouseState> states = new ArrayList<mouse.shared.MouseState>();
 		
 		for(Mouse m1 : mice) {
 			if(confusedMice.contains(m1)) {
+				states.add(new mouse.shared.MouseState(m1.getPosition(), m1.getLastOrientation()));
 				continue;
 			}
 			
@@ -41,10 +44,14 @@ public class Simulator {
 			if(! confusedMice.contains(m1)) {
 				m1.applyMotion(direction);
 			}
+			
+			states.add(new mouse.shared.MouseState(m1.getPosition(), direction));
 		}
 		
 		for(Mouse m : confusedMice) {
 			m.confuse();
 		}
+		
+		return states;
 	}
 }
