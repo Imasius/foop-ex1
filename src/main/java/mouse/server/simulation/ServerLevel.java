@@ -7,6 +7,7 @@ import java.util.Collection;
 import mouse.shared.Level;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
+import mouse.shared.messages.GameStartMessage;
 
 public class ServerLevel implements Level {
     Tile[][] tiles;
@@ -45,5 +46,9 @@ public class ServerLevel implements Level {
     		states.add(new MouseState(m.getPosition(), m.getLastOrientation()));
     	}
         return states;
+    }
+    
+    public static GameStartMessage toGameStartMessage(ServerLevel level) {
+    	return new GameStartMessage(level.tiles, level.baitPosition, level.startPositions, level.getMice());
     }
 }
