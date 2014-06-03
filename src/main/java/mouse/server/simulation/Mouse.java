@@ -16,6 +16,7 @@ public class Mouse {
 	private LevelAdapter levelAdapter;
 	private int randomCounter;
 	private Orientation randomDirection;
+	private Orientation lastOrientation = Orientation.NORTH;
 	
 	private static final Logger log = LoggerFactory.getLogger(Mouse.class);
 	
@@ -55,6 +56,7 @@ public class Mouse {
 			break;
 		}
 		
+		lastOrientation = ret;
 		return ret;
 	}
 	
@@ -71,4 +73,9 @@ public class Mouse {
 		randomDirection = levelAdapter.getRandomFeasibleDirection(position);
 		randomCounter = 4;
 	}
+
+	public Orientation getLastOrientation() {
+		return lastOrientation;
+	}
+	
 }
