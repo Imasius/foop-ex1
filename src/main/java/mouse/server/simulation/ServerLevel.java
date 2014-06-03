@@ -3,6 +3,7 @@ package mouse.server.simulation;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import mouse.shared.Level;
 import mouse.shared.MouseState;
@@ -10,10 +11,10 @@ import mouse.shared.Tile;
 import mouse.shared.messages.GameStartMessage;
 
 public class ServerLevel implements Level {
-	Tile[][] tiles;
-	Point baitPosition;
-	Collection<Point> startPositions;
-	ArrayList<Mouse> mice;
+	private Tile[][] tiles;
+	private Point baitPosition = new Point();
+	private Collection<Point> startPositions = new ArrayList<Point>();
+	private List<Mouse> mice = new ArrayList<Mouse>();
 
 	public ServerLevel(int levelId) {
 		if (levelId == 1) {
