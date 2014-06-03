@@ -87,20 +87,6 @@ public class MouseCanvas extends Canvas {
                                          g2d);
 
             levelDrawer.draw(args);
-
-            /*
-             double fps = ((int) GameLogic.fps * 100) / 100;
-             String message = "FPS:" + fps;
-             g.drawString(message, 0, 20);
-
-             if (SpeedBowlGame.displayedGame != null) {
-             if (SpeedBowlGame.displayedGame.logic.state == GameLogic.State.READY) {
-             message = "READY";
-             g.setFont(new Font("Calibri", Font.PLAIN, 30));
-             g.drawString(message, getWidth() / 2 - 30, getHeight() / 2 - 30);
-             }
-             }
-             */
         }
         finally{
             if (g2d != null) g2d.dispose();

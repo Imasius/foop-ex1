@@ -91,6 +91,7 @@ public class ClientLevel implements Level, ServerConnectionListener {
     public void onGameOver() {
         // handled by MouseJFrame
     }
+    
     @Override
     public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
         this.tiles = tiles;

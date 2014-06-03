@@ -2,7 +2,6 @@ package mouse.shared;
 
 import java.awt.Point;
 import java.util.Collection;
-import mouse.server.simulation.Orientation;
 
 /**
  * Abstract Level to be used on both Server and Client. Coordinates start at

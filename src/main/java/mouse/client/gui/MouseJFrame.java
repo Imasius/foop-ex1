@@ -38,6 +38,7 @@ public class MouseJFrame extends JFrame {
 
         @Override
         public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+            mcCanvas.repaint();
         } // handled by level
 
         @Override

@@ -45,9 +45,14 @@ public class LevelDrawer implements Drawable {
         BufferedImage imgStart = null;
 
         try {
-            imgMouse = ImageIO.read(ClassLoader.getSystemResource("images/mouse.gif"));
-            imgStart = ImageIO.read(ClassLoader.getSystemResource("images/start.gif"));
-            this.imgBait = ImageIO.read(ClassLoader.getSystemResource("images/bait.gif"));
+            //Introduced alternative mouse image sizes for a higher resolution level which needs smaller graphics (low quality)
+            //imgMouse = ImageIO.read(ClassLoader.getSystemResource("images/mouse.gif"));
+            //imgStart = ImageIO.read(ClassLoader.getSystemResource("images/start.gif"));
+            //this.imgBait = ImageIO.read(ClassLoader.getSystemResource("images/bait.gif"));
+            
+            imgMouse = ImageIO.read(ClassLoader.getSystemResource("images/mouse_small.gif"));
+            imgStart = ImageIO.read(ClassLoader.getSystemResource("images/start_small.gif"));
+            this.imgBait = ImageIO.read(ClassLoader.getSystemResource("images/bait_small.gif"));
         }
         catch (IOException e) {
             e.printStackTrace();
