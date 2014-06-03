@@ -1,4 +1,4 @@
-package mouse.shared.Messages;
+package mouse.shared.messages;
 
 import java.awt.*;
 import java.io.Serializable;

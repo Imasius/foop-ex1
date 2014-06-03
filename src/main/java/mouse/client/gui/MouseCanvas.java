@@ -11,6 +11,7 @@ import mouse.client.data.ClientLevel;
 import mouse.shared.Tile;
 
 public class MouseCanvas extends Canvas {
+    
     class LocalMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {

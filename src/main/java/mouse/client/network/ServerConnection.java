@@ -1,8 +1,8 @@
 package mouse.client.network;
 
-import mouse.shared.Messages.MessageListener;
-import mouse.shared.Messages.MessageParser;
-import mouse.shared.Messages.TryChangeDoorStateMessage;
+import mouse.shared.messages.MessageListener;
+import mouse.shared.messages.MessageParser;
+import mouse.shared.messages.TryChangeDoorStateMessage;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
 import org.slf4j.Logger;

@@ -1,5 +1,13 @@
 package mouse.shared.Messages;
 
+import mouse.shared.messages.GameOverMessage;
+import mouse.shared.messages.MouseMovedMessage;
+import mouse.shared.messages.MessageParser;
+import mouse.shared.messages.DoorStateChangedMessage;
+import mouse.shared.messages.Message;
+import mouse.shared.messages.TryChangeDoorStateMessage;
+import mouse.shared.messages.MessageListener;
+import mouse.shared.messages.GameStartMessage;
 import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;

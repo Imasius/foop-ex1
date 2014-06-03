@@ -19,14 +19,15 @@ public class MouseClient {
 
         ClientConfiguration.INSTANCE.parseCommandLine(args);
 
-        BroadcastReceiver receiver = new BroadcastReceiver(ClientConfiguration.INSTANCE);
+        BroadcastReceiver receiver = new BroadcastReceiver(ClientConfiguration.INSTANCE);        
         receiver.addListener(new BroadcastReceiverListener() {
             @Override
             public void onServerFound(ServerInfo info) {
                 SwingUtilities.invokeLater(new GuiTask(new ServerConnection(info)));
             }
         });
+        new Thread(receiver).start();
         //SwingUtilities.invokeLater(receiver);
-         SwingUtilities.invokeLater(new GuiTask(null));
+        //SwingUtilities.invokeLater(new GuiTask(null));
     }
 }

@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
- * Created by Florian on 2014-04-12.
- * Added multicast code and group 2014-06-03 Kevin
+ * Created by Florian on 2014-04-12. Added multicast code and group 2014-06-03
+ * Kevin
  */
-public class BroadcastReceiver implements Runnable  {
+public class BroadcastReceiver implements Runnable {
+
     private static final Logger log = LoggerFactory.getLogger(BroadcastReceiver.class);
 
     private final ClientConfiguration clientConfiguration;
@@ -28,18 +28,20 @@ public class BroadcastReceiver implements Runnable  {
     public void addListener(BroadcastReceiverListener listener) {
         listeners.add(listener);
     }
+
     public void removeListener(BroadcastReceiverListener listener) {
         listeners.remove(listener);
     }
 
     @Override
     public void run() {
-        log.debug("Initializing multicast task for broadcasting the server address.");
+        log.debug("Initializing multicast task for recieving the server address.");
 
         MulticastSocket socket = null;
         InetAddress group = null;
         try {
             socket = new MulticastSocket(clientConfiguration.getMulticastPort());
+            group = InetAddress.getByName(clientConfiguration.getMulticastGroup());
             socket.joinGroup(group);
         } catch (SocketException ex) {
             log.error("Unable to create multicast socket.", ex);
@@ -60,7 +62,9 @@ public class BroadcastReceiver implements Runnable  {
 
         InetAddress address = null;
         try {
-            address = Inet4Address.getByAddress(packet.getData());
+            String str = new String(packet.getData());
+            log.debug("Recieved Inet4Adress::" + str);
+            address = Inet4Address.getByName(str);
         } catch (UnknownHostException e) {
             log.error("Received server-address is a unknown host.", e);
             System.exit(1);
@@ -68,8 +72,9 @@ public class BroadcastReceiver implements Runnable  {
 
         ServerInfo serverInfo = new ServerInfo(address);
 
-        for (BroadcastReceiverListener listener : listeners)
+        for (BroadcastReceiverListener listener : listeners) {
             listener.onServerFound(serverInfo);
+        }
         try {
             socket.leaveGroup(group);
         } catch (IOException ex) {
