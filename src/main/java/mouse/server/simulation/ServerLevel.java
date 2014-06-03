@@ -20,7 +20,7 @@ public class ServerLevel implements Level {
 		if (levelId == 1) {
 			tiles = new Tile[50][50];
 
-			for (int i = 0; i < 50; ++i) {
+			for (int i = 0; i < 49; ++i) {
 				for (int j = 0; j < 50; ++j) {
 					if (i == 0 || j == 0 || j == 25 || i == 25) {
 						tiles[i][j] = Tile.WALL;
@@ -86,5 +86,13 @@ public class ServerLevel implements Level {
 	public static GameStartMessage toGameStartMessage(ServerLevel level) {
 		return new GameStartMessage(level.tiles, level.baitPosition,
 				level.startPositions, level.getMice());
+	}
+	
+	public void changeDoor(Point doorPosition, boolean wantClose) {
+		if(tiles[doorPosition.x][doorPosition.y] == Tile.DOOR_OPEN && wantClose) {
+			tiles[doorPosition.x][doorPosition.y] = Tile.DOOR_CLOSED;
+		} else if(tiles[doorPosition.x][doorPosition.y] == Tile.DOOR_CLOSED && !wantClose) {
+			tiles[doorPosition.x][doorPosition.y] = Tile.DOOR_OPEN;
+		}
 	}
 }
