@@ -44,7 +44,7 @@ public class MouseServer {
             return false;
         }
 
-        ClientListener clientListener = new ClientListener(serverSocket, eventQueue);
+        ClientListener clientListener = new ClientListener(serverSocket, eventQueue, serverConfiguration.getPlayerCount());
         clientListener.start();
 
         if (serverConfiguration.isBroadcastEnabled())

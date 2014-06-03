@@ -41,7 +41,7 @@ public class EventQueue extends Thread implements MessageListener {
 
     @Override
     public void onMouseMoved(int mouseIdx, MouseState newState) {
-
+        /* ignored by server */
     }
 
     @Override
@@ -56,11 +56,11 @@ public class EventQueue extends Thread implements MessageListener {
 
     @Override
     public void onTryChangeDoorState(Point doorPosition, boolean tryClose) {
-
+        log.info("Attempted door change {} to {}.", doorPosition, tryClose);
     }
 
     @Override
     public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
-
+        /* ignored by server */
     }
 }
