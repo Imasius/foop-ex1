@@ -26,6 +26,7 @@ public class MouseClient {
                 SwingUtilities.invokeLater(new GuiTask(new ServerConnection(info)));
             }
         });
-        SwingUtilities.invokeLater(receiver);
+        //SwingUtilities.invokeLater(receiver);
+         SwingUtilities.invokeLater(new GuiTask(null));
     }
 }

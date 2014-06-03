@@ -17,16 +17,28 @@ import org.slf4j.LoggerFactory;
  * @author Kevin Streicher
  */
 public class MouseJFrame extends JFrame {
+
     class LocalMouseCanvasListener implements MouseCanvasListener {
+
         @Override
         public void onDoorClicked(Point door, boolean isClosed) {
-            connection.tryChangeDoorState(door, !isClosed);
+            connection.tryChangeDoorState(door, !isClosed); 
         }
     }
+
     class LocalServerConnectionListener implements ServerConnectionListener {
-        @Override public void onMouseMoved(int mouseIdx, MouseState newState) { }                                                                // handled by level
-        @Override public void onDoorStateChanged(Point doorPosition, boolean isClosed) { }                                                       // handled by level
-        @Override public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) { } // handled by level
+
+        @Override
+        public void onMouseMoved(int mouseIdx, MouseState newState) {
+        }                                                                // handled by level
+
+        @Override
+        public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
+        }                                                       // handled by level
+
+        @Override
+        public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+        } // handled by level
 
         @Override
         public void onGameOver() {
@@ -44,11 +56,15 @@ public class MouseJFrame extends JFrame {
         this.mcCanvas = new MouseCanvas();
         this.mcCanvas.addListener(new LocalMouseCanvasListener());
 
-        this.connection = connection;
-        this.connection.addListener(mcCanvas.getLevel());
-        this.connection.addListener(new LocalServerConnectionListener());
-        new Thread(this.connection).start();
-
+        if (this.connection != null) {
+            this.connection = connection;
+            this.connection.addListener(mcCanvas.getLevel());
+            this.connection.addListener(new LocalServerConnectionListener());
+            new Thread(this.connection).start();
+        } else {
+            this.connection = null;
+            log.debug("No Server specified - started serverless dummy-client");
+        }
 
         //TODO switch to miglayout and set JFrame size and position
         setLayout(new BorderLayout());
@@ -63,7 +79,6 @@ public class MouseJFrame extends JFrame {
         super.setVisible(b); //To change body of generated methods, choose Tools | Templates.
         mcCanvas.init();
     }
-    
 
     private void maximize() {
         Toolkit tk = Toolkit.getDefaultToolkit();

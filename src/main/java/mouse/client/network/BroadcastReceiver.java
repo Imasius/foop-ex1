@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by Florian on 2014-04-12.
+ * Added multicast code and group 2014-06-03 Kevin
  */
 public class BroadcastReceiver implements Runnable  {
     private static final Logger log = LoggerFactory.getLogger(BroadcastReceiver.class);
@@ -34,10 +36,15 @@ public class BroadcastReceiver implements Runnable  {
     public void run() {
         log.debug("Initializing multicast task for broadcasting the server address.");
 
-        DatagramSocket socket = null;
+        MulticastSocket socket = null;
+        InetAddress group = null;
         try {
-            socket = new DatagramSocket(clientConfiguration.getMulticastPort());
+            socket = new MulticastSocket(clientConfiguration.getMulticastPort());
+            socket.joinGroup(group);
         } catch (SocketException ex) {
+            log.error("Unable to create multicast socket.", ex);
+            System.exit(1);
+        } catch (IOException ex) {
             log.error("Unable to create multicast socket.", ex);
             System.exit(1);
         }
@@ -63,5 +70,12 @@ public class BroadcastReceiver implements Runnable  {
 
         for (BroadcastReceiverListener listener : listeners)
             listener.onServerFound(serverInfo);
+        try {
+            socket.leaveGroup(group);
+        } catch (IOException ex) {
+            log.error("Couldn't cleanly leave Multicast Group", ex);
+            System.exit(1);
+        }
+        socket.close();
     }
 }

@@ -14,7 +14,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
+/**
+ * 
+ * @author Markus Scherer, 8.4
+ */
 public class LevelAdapterTest {
 	private Level level = null;
 	private LevelAdapter adapter = null;

@@ -1,9 +1,6 @@
 package mouse.shared.Messages;
 
-import mouse.server.simulation.Orientation;
-import mouse.shared.Level;
 import mouse.shared.MouseState;
-import mouse.shared.Pair;
 import mouse.shared.Tile;
 
 import java.awt.*;

@@ -1,10 +1,8 @@
 package mouse.shared.Messages;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import mouse.server.simulation.Orientation;
 import mouse.shared.MouseState;

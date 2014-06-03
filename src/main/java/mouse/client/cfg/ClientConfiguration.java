@@ -4,14 +4,17 @@ import java.util.*;
 
 /**
  * Created by Florian on 2014-04-11.
+ * Added multicast code and group 2014-06-03 Kevin
  */
 public class ClientConfiguration {
     private boolean isFullscreen;
     private short multicastPort;
+    private String multicastGroup;
 
     public ClientConfiguration() {
         this.isFullscreen = false;
         this.multicastPort = 30332;
+        this.multicastGroup = "224.0.100.100";
     }
 
     public boolean isFullscreen() {
@@ -19,6 +22,9 @@ public class ClientConfiguration {
     }
     public short getMulticastPort() {
         return multicastPort;
+    }
+    public String getMulticastGroup(){
+        return multicastGroup;
     }
 
     public void parseCommandLine(String[] args){
@@ -55,8 +61,6 @@ public class ClientConfiguration {
             }
         }
     }
-
-
 
     // if nothing else specified load default config
     public static final ClientConfiguration INSTANCE = new ClientConfiguration();
