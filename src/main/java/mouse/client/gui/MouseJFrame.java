@@ -56,7 +56,7 @@ public class MouseJFrame extends JFrame {
         this.mcCanvas = new MouseCanvas();
         this.mcCanvas.addListener(new LocalMouseCanvasListener());
 
-        if (this.connection != null) {
+        if (connection != null) {
             this.connection = connection;
             this.connection.addListener(mcCanvas.getLevel());
             this.connection.addListener(new LocalServerConnectionListener());

@@ -24,11 +24,7 @@ public abstract class Message {
         catch (IOException ex) {
             log.error("Unable to serialize message.", ex);
             System.exit(1);
-        }
-        finally {
-            if (out != null)
-                try { out.close(); } catch(IOException ex) {}
-        }
+        }        
     }
     public static Message fromStream(InputStream stream){
         ObjectInput in = null;
@@ -44,11 +40,7 @@ public abstract class Message {
         catch (ClassNotFoundException ex) {
             log.error("Unable to deserialize message.", ex);
             System.exit(1);
-        }
-        finally {
-            if (in != null)
-                try { in.close(); } catch(IOException ex) {}
-        }
+        }       
 
         return msg;
     }
