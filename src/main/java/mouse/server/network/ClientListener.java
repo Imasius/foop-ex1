@@ -1,5 +1,6 @@
 package mouse.server.network;
 
+import mouse.server.EventQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +24,11 @@ public class ClientListener extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ClientListener.class);
 
     private final ServerSocket serverSocket;
+    private final EventQueue queue;
 
-    public ClientListener(ServerSocket serverSocket) {
+    public ClientListener(ServerSocket serverSocket, EventQueue queue) {
         this.serverSocket = serverSocket;
+        this.queue = queue;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class ClientListener extends Thread {
 
                 log.debug("Client connected from IP address {}", client.getInetAddress());
 
-                ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(client);
+                ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(client, queue);
                 executorService.execute(clientConnectionHandler);
             }
         } catch (IOException e) {

@@ -24,7 +24,7 @@ public class MouseMovedMessage extends Message implements Serializable {
     }
 
     @Override
-    protected void alertListeners(Iterable<MessageListener> observers) {
+    public void alertListeners(Iterable<? extends MessageListener> observers) {
         for (MessageListener observer : observers)
             observer.onMouseMoved(mouseIdx, newState);
     }

@@ -11,7 +11,7 @@ import java.io.*;
 public abstract class Message {
     private static final Logger log = LoggerFactory.getLogger(Message.class);
 
-    protected abstract void alertListeners(Iterable<MessageListener> observers);
+    public abstract void alertListeners(Iterable<? extends MessageListener> observers);
 
     public void writeToStream(OutputStream stream){
         ObjectOutput out = null;

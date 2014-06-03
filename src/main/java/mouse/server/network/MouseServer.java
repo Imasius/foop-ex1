@@ -1,5 +1,6 @@
 package mouse.server.network;
 
+import mouse.server.EventQueue;
 import mouse.server.ServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,12 @@ public class MouseServer {
     private ServerSocket serverSocket;
     private final Broadcaster broadcaster;
     private final ServerConfiguration serverConfiguration;
+    private final EventQueue eventQueue;
 
     public MouseServer() {
         serverConfiguration = ServerConfiguration.load();
         broadcaster = new Broadcaster(serverConfiguration);
+        eventQueue = new EventQueue();
     }
 
     /**
@@ -41,11 +44,13 @@ public class MouseServer {
             return false;
         }
 
-        ClientListener clientListener = new ClientListener(serverSocket);
+        ClientListener clientListener = new ClientListener(serverSocket, eventQueue);
         clientListener.start();
 
         if (serverConfiguration.isBroadcastEnabled())
             broadcaster.start();
+
+        eventQueue.start();
 
         return true;
     }
@@ -60,5 +65,7 @@ public class MouseServer {
 
         if (serverConfiguration.isBroadcastEnabled())
             broadcaster.stop();
+
+        eventQueue.interrupt();
     }
 }
