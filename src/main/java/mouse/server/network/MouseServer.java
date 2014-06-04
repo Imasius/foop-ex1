@@ -27,7 +27,7 @@ public class MouseServer {
     public MouseServer() {
         serverConfiguration = ServerConfiguration.load();
         broadcaster = new Broadcaster(serverConfiguration);
-        eventQueue = new EventQueue();
+        eventQueue = new EventQueue(serverConfiguration.getTickInterval());
     }
 
     /**
@@ -44,7 +44,7 @@ public class MouseServer {
             return false;
         }
 
-        ClientListener clientListener = new ClientListener(serverSocket, eventQueue, serverConfiguration.getPlayerCount());
+        ClientListener clientListener = new ClientListener(serverSocket, eventQueue.getQueue(), serverConfiguration.getPlayerCount());
         clientListener.start();
 
         if (serverConfiguration.isBroadcastEnabled())
@@ -66,6 +66,6 @@ public class MouseServer {
         if (serverConfiguration.isBroadcastEnabled())
             broadcaster.stop();
 
-        eventQueue.interrupt();
+        eventQueue.stop();
     }
 }

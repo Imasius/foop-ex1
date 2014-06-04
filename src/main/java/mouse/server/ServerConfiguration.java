@@ -22,6 +22,7 @@ public class ServerConfiguration {
     public static final String DEFAULT_MULTICAST_ADDRESS = "224.0.100.100";
     public static final int DEFAULT_MULTICAST_INTERVAL = 2000;
     public static final int DEFAULT_PLAYER_COUNT = 2;
+    public static final int DEFAULT_TICK_INTERVAL = 1000;
 
     private static final String configurationFile = "mouse.properties";
     private static final String serverPortKey = "server.port";
@@ -30,7 +31,8 @@ public class ServerConfiguration {
     private static final String multicastPortKey = "server.lobbyBroadcast.port";
     private static final String multicastAddressKey = "server.lobbyBroadcast.address";
     private static final String multicastIntervalKey = "server.lobbyBroadcast.interval";
-    private static final String playerCountKey = "server.playerCount";
+    private static final String playerCountKey = "server.game.playerCount";
+    private static final String tickIntervalKey = "server.game.tickInterval";
 
     private short serverPort = DEFAULT_SERVER_PORT;
     private boolean broadcastEnabled = DEFAULT_BROADCAST_ENABLED;
@@ -39,6 +41,7 @@ public class ServerConfiguration {
     private String multicastAddress = DEFAULT_MULTICAST_ADDRESS;
     private int multicastInterval = DEFAULT_MULTICAST_INTERVAL;
     private int playerCount = DEFAULT_PLAYER_COUNT;
+    private int tickInterval = DEFAULT_TICK_INTERVAL;
 
     public static ServerConfiguration load() {
         ServerConfiguration serverConfiguration = new ServerConfiguration();
@@ -89,6 +92,9 @@ public class ServerConfiguration {
 
         playerCount = Integer.valueOf(serverProperties.getProperty(playerCountKey));
         log.debug("'{}' has value '{}'.", playerCountKey, playerCount);
+
+        tickInterval = Integer.valueOf(serverProperties.getProperty(tickIntervalKey));
+        log.debug("'{}' has value '{}'.", tickIntervalKey, tickInterval);
     }
 
     public short getServerPort() {
@@ -117,5 +123,9 @@ public class ServerConfiguration {
 
     public int getPlayerCount() {
         return playerCount;
+    }
+
+    public int getTickInterval() {
+        return tickInterval;
     }
 }

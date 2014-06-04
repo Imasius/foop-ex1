@@ -1,6 +1,5 @@
 package mouse.server.network;
 
-import mouse.server.EventQueue;
 import mouse.shared.messages.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,10 +23,10 @@ public class ClientConnectionHandler extends Thread {
     private static AtomicInteger idCounter = new AtomicInteger(0);
 
     private final Socket socket;
-    private final EventQueue queue;
+    private final BlockingQueue<MessageWrapper> queue;
     private final int clientId;
 
-    public ClientConnectionHandler(Socket socket, EventQueue queue) {
+    public ClientConnectionHandler(Socket socket, BlockingQueue<MessageWrapper> queue) {
         this.socket = socket;
         this.queue = queue;
         this.clientId = idCounter.getAndIncrement();
@@ -44,7 +44,7 @@ public class ClientConnectionHandler extends Thread {
         while (true) {
             Message message = Message.fromStream(inputStream);
             try {
-                queue.getQueue().put(new MessageWrapper(message, this));
+                queue.put(new MessageWrapper(message, this));
             } catch (InterruptedException e) {
                 log.warn("Interrupted during put.", e);
             }

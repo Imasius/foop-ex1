@@ -1,6 +1,5 @@
 package mouse.server.network;
 
-import mouse.server.EventQueue;
 import mouse.server.simulation.LevelAdapter;
 import mouse.server.simulation.Mouse;
 import mouse.server.simulation.ServerLevel;
@@ -15,6 +14,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,10 +30,10 @@ public class ClientListener extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ClientListener.class);
 
     private final ServerSocket serverSocket;
-    private final EventQueue queue;
+    private final BlockingQueue<MessageWrapper> queue;
     private final int clientCount;
 
-    public ClientListener(ServerSocket serverSocket, EventQueue queue, int clientCount) {
+    public ClientListener(ServerSocket serverSocket, BlockingQueue<MessageWrapper> queue, int clientCount) {
         this.serverSocket = serverSocket;
         this.queue = queue;
         this.clientCount = clientCount;

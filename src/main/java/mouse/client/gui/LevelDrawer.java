@@ -1,10 +1,5 @@
 package mouse.client.gui;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
 import mouse.client.data.ClientLevel;
 import mouse.client.gui.helper.ImageBlender;
 import mouse.shared.MouseState;
@@ -13,6 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * Date 06.04.2014
@@ -108,6 +107,9 @@ public class LevelDrawer implements Drawable {
         for (int y = 0; y < level.getHeight(); y++) {
             for (int x = 0; x < level.getWidth(); x++) {
                 Tile t = level.tileAt(x,y);
+                if (t == null) {
+                    t = Tile.EMPTY;
+                }
 
                 switch (t) {
                     case EMPTY:         args.g2d.setColor(COLOR_EMPTY);         break;
