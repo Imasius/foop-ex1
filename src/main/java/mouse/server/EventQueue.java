@@ -4,10 +4,10 @@ import mouse.server.network.MessageWrapper;
 
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
+import mouse.server.event.GameLogicEventListener;
 
 /**
- * User: Simon
- * Date: 04.06.2014
+ * User: Simon Date: 04.06.2014
  */
 public class EventQueue {
 
@@ -32,5 +32,9 @@ public class EventQueue {
 
     public BlockingQueue<MessageWrapper> getQueue() {
         return eventQueueTask.getQueue();
+    }
+
+    public void registerGameLogicEventListener(GameLogicEventListener logicEventListener) {
+        this.eventQueueTask.registerGameLogicEventListener(logicEventListener);
     }
 }

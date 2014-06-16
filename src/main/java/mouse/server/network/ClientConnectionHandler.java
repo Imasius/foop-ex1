@@ -1,20 +1,18 @@
 package mouse.server.network;
 
-import mouse.shared.messages.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import mouse.shared.messages.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles communication with a specific client.
  *
- * User: Simon
- * Date: 26.03.14
+ * User: Simon Date: 26.03.14
  */
 public class ClientConnectionHandler extends Thread {
 
@@ -53,5 +51,18 @@ public class ClientConnectionHandler extends Thread {
 
     public int getClientId() {
         return clientId;
+    }
+
+    public void sendMessage(Message m) {
+        try {
+            m.writeToStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            log.warn("Unable to send message {} to client {}", m.toString(), toString());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ClientConnectionHandler: " + clientId + " Remotadress:" + socket.getRemoteSocketAddress().toString();
     }
 }

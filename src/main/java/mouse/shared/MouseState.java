@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by Florian on 2014-04-13.
  */
-public class MouseState implements Serializable {
+    public class MouseState implements Serializable {
     private Point position;
     private Orientation orientation;
 

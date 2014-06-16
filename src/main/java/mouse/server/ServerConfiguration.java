@@ -23,6 +23,7 @@ public class ServerConfiguration {
     public static final int DEFAULT_MULTICAST_INTERVAL = 2000;
     public static final int DEFAULT_PLAYER_COUNT = 2;
     public static final int DEFAULT_TICK_INTERVAL = 1000;
+    public static final int DEFAULT_LEVEL_ID = 1;
 
     private static final String configurationFile = "mouse.properties";
     private static final String serverPortKey = "server.port";
@@ -32,7 +33,8 @@ public class ServerConfiguration {
     private static final String multicastAddressKey = "server.lobbyBroadcast.address";
     private static final String multicastIntervalKey = "server.lobbyBroadcast.interval";
     private static final String playerCountKey = "server.game.playerCount";
-    private static final String tickIntervalKey = "server.game.tickInterval";
+    private static final String tickIntervalKey = "server.game.tickInterval";    
+    private static final String levelIDKey = "server.level.ID";
 
     private short serverPort = DEFAULT_SERVER_PORT;
     private boolean broadcastEnabled = DEFAULT_BROADCAST_ENABLED;
@@ -42,6 +44,7 @@ public class ServerConfiguration {
     private int multicastInterval = DEFAULT_MULTICAST_INTERVAL;
     private int playerCount = DEFAULT_PLAYER_COUNT;
     private int tickInterval = DEFAULT_TICK_INTERVAL;
+    private int levelID = DEFAULT_LEVEL_ID;
 
     public static ServerConfiguration load() {
         ServerConfiguration serverConfiguration = new ServerConfiguration();
@@ -95,6 +98,9 @@ public class ServerConfiguration {
 
         tickInterval = Integer.valueOf(serverProperties.getProperty(tickIntervalKey));
         log.debug("'{}' has value '{}'.", tickIntervalKey, tickInterval);
+        
+        levelID = Integer.valueOf(serverProperties.getProperty(levelIDKey));
+        log.debug("'{}' has value '{}'.", levelIDKey, levelID);
     }
 
     public short getServerPort() {
@@ -127,5 +133,8 @@ public class ServerConfiguration {
 
     public int getTickInterval() {
         return tickInterval;
+    }
+    public int getLevelID() {
+        return levelID;
     }
 }

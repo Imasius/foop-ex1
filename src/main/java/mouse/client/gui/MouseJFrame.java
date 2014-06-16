@@ -23,6 +23,7 @@ public class MouseJFrame extends JFrame {
         @Override
         public void onDoorClicked(Point door, boolean isClosed) {
             connection.tryChangeDoorState(door, !isClosed); 
+            log.debug("Clicked on a door");
         }
     }
 
@@ -30,15 +31,18 @@ public class MouseJFrame extends JFrame {
 
         @Override
         public void onMouseMoved(int mouseIdx, MouseState newState) {
+            mcCanvas.repaint();
         }                                                                // handled by level
 
         @Override
         public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
-        }                                                       // handled by level
+            mcCanvas.repaint();
+        }                                                       // handled by level        
 
         @Override
         public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
             mcCanvas.repaint();
+            log.debug("Game started");
         } // handled by level
 
         @Override

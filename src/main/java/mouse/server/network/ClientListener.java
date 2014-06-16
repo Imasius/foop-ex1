@@ -17,13 +17,15 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import mouse.server.event.CloseDoorEvent;
+import mouse.server.event.GameLogicEventListener;
+import mouse.server.event.PlayerJoinedEvent;
 
 /**
  * This class will use accept client connections and create appropriate objects
  * for each client.
  * <p/>
- * User: Simon
- * Date: 26.03.14
+ * User: Simon Date: 26.03.14
  */
 public class ClientListener extends Thread {
 
@@ -31,55 +33,48 @@ public class ClientListener extends Thread {
 
     private final ServerSocket serverSocket;
     private final BlockingQueue<MessageWrapper> queue;
-    private final int clientCount;
+    private final ArrayList<GameLogicEventListener> listeners = new ArrayList<GameLogicEventListener>();
+    private final List<Socket> clientList = new ArrayList<Socket>();
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public ClientListener(ServerSocket serverSocket, BlockingQueue<MessageWrapper> queue, int clientCount) {
+    public ClientListener(ServerSocket serverSocket, BlockingQueue<MessageWrapper> queue) {
         this.serverSocket = serverSocket;
         this.queue = queue;
-        this.clientCount = clientCount;
     }
 
     @Override
     public void run() {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        List<Socket> clientList = new ArrayList<Socket>();
-
         try {
             while (true) {
                 Socket client = serverSocket.accept();
                 clientList.add(client);
-
                 log.debug("Client connected from IP address {}", client.getInetAddress());
-
-                ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(client, queue);
-                executorService.execute(clientConnectionHandler);
-
-                if (clientList.size() == clientCount) {
-                    log.info("Desired player count reached ({}). Starting game.", clientCount);
-
-                    ServerLevel level = new ServerLevel(1);
-                    List<Mouse> mice = new ArrayList<Mouse>();
-                    Iterator<Point> iterator = level.getStartPositions().iterator();
-                    for (int i = 0; i < clientList.size(); i++) {
-                        Point start = iterator.next();
-                        Mouse mouse = new Mouse(start, new LevelAdapter(level));
-                        level.addMouse(mouse);
-                        mice.add(mouse);
-                    }
-
-                    GameStartMessage message = ServerLevel.toGameStartMessage(level);
-                    for (Socket socket : clientList) {
-                        message.writeToStream(socket.getOutputStream());
-                    }
-                }
+                firePlayerJoinedEvent(client);
             }
         } catch (IOException e) {
             executorService.shutdown();
 
             log.debug("Shutting down all client connections. Currently {} clients.", clientList.size());
             for (Socket client : clientList) {
-                try { client.close(); } catch (IOException ex) { /* ignored */ }
+                try {
+                    client.close();
+                } catch (IOException ex) { /* ignored */ }
             }
         }
+    }
+
+    public void registerGameLogicEventListener(GameLogicEventListener l) {
+        listeners.add(l);
+    }
+
+    private void firePlayerJoinedEvent(Socket client) {
+        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(client, queue);
+        executorService.execute(clientConnectionHandler);
+
+        Iterator<GameLogicEventListener> it = listeners.iterator();
+        while (it.hasNext()) {
+            it.next().handlePlayerJoinedEvent(new PlayerJoinedEvent(clientConnectionHandler));
+        }
+
     }
 }

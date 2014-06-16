@@ -1,6 +1,5 @@
 package mouse.client.network;
 
-import mouse.shared.Level;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
 

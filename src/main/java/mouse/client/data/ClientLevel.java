@@ -9,17 +9,21 @@ import mouse.shared.Tile;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Florian on 2014-04-12.
  */
 public class ClientLevel implements Level, ServerConnectionListener {
+
     Tile[][] tiles;
     Point baitPosition;
     Collection<Point> startPositions;
     ArrayList<MouseState> mice;
+    private static final Logger log = LoggerFactory.getLogger(ClientLevel.class);
 
-    public ClientLevel(){
+    public ClientLevel() {
         startPositions = new ArrayList<Point>();
         startPositions.add(new Point(2, 2));
         startPositions.add(new Point(4, 4));
@@ -55,43 +59,51 @@ public class ClientLevel implements Level, ServerConnectionListener {
     public int getHeight() {
         return tiles[0].length;
     }
+
     @Override
     public int getWidth() {
         return tiles.length;
     }
+
     @Override
     public Tile tileAt(int x, int y) {
         return tiles[x][y];
     }
+
     @Override
     public Point getBaitPosition() {
         return baitPosition;
     }
+
     @Override
     public Collection<Point> getStartPositions() {
         return startPositions;
     }
+
     @Override
     public Collection<MouseState> getMice() {
         return mice;
     }
 
-
-
     @Override
     public void onMouseMoved(int mouseIdx, MouseState newState) {
+        MouseState st = mice.get(mouseIdx);
         mice.set(mouseIdx, newState);
+        log.debug("Mouse has moved from:{},{} to {},{}", st.getPosition().x, st.getPosition().y, newState.getPosition().x, newState.getPosition().y);
     }
+
     @Override
     public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
         tiles[doorPosition.x][doorPosition.y] = isClosed ? Tile.DOOR_CLOSED
-                                                         : Tile.DOOR_OPEN;
+                : Tile.DOOR_OPEN;
+        log.debug("Door state has changed. Door is " + (isClosed ? "closed" : "open"));
     }
+
     @Override
     public void onGameOver() {
         // handled by MouseJFrame
     }
-    
+
     @Override
     public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
         this.tiles = tiles;
