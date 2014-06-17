@@ -2,20 +2,21 @@ package mouse.client.data;
 
 import mouse.client.network.ServerConnectionListener;
 import mouse.server.simulation.Orientation;
-import mouse.shared.Level;
+import mouse.shared.LevelStructure;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
+import mouse.shared.messages.GameStartMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Florian on 2014-04-12.
  */
-public class ClientLevel implements Level, ServerConnectionListener {
+public class ClientLevel implements LevelStructure, ServerConnectionListener {
 
     Tile[][] tiles;
     Point baitPosition;
@@ -71,6 +72,11 @@ public class ClientLevel implements Level, ServerConnectionListener {
     }
 
     @Override
+    public void setTileAt(int x, int y, Tile tile) {
+        tiles[x][y] = tile;
+    }
+
+    @Override
     public Point getBaitPosition() {
         return baitPosition;
     }
@@ -81,6 +87,10 @@ public class ClientLevel implements Level, ServerConnectionListener {
     }
 
     @Override
+    public GameStartMessage toGameStartMessage() {
+        return new GameStartMessage(tiles, baitPosition, startPositions, mice);
+    }
+
     public Collection<MouseState> getMice() {
         return mice;
     }

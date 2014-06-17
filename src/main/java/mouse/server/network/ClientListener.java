@@ -1,13 +1,10 @@
 package mouse.server.network;
 
-import mouse.server.simulation.LevelAdapter;
-import mouse.server.simulation.Mouse;
-import mouse.server.simulation.ServerLevel;
-import mouse.shared.messages.GameStartMessage;
+import mouse.server.event.GameLogicEventListener;
+import mouse.server.event.PlayerJoinedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,9 +14,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import mouse.server.event.CloseDoorEvent;
-import mouse.server.event.GameLogicEventListener;
-import mouse.server.event.PlayerJoinedEvent;
 
 /**
  * This class will use accept client connections and create appropriate objects

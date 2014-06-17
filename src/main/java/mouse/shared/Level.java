@@ -1,26 +1,74 @@
 package mouse.shared;
 
-import java.awt.Point;
+import mouse.server.simulation.Mouse;
+import mouse.shared.messages.GameStartMessage;
+
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * Abstract Level to be used on both Server and Client. Coordinates start at
- * (0,0) in the upper-left corner and range to (width-1, height-1). User: Markus
- * Date: 02.04.14
- *
- * Added Collection<Pair<Point, Orientation>> getMousePosition() user: Kevin Date: 06.04.14
+ * User: Simon
+ * Date: 17.06.2014
  */
-public interface Level {
+public class Level implements LevelStructure {
 
-    public int getHeight();
+    private final LevelStructure levelStructure;
+    private final List<Mouse> mice = new ArrayList<Mouse>();
 
-    public int getWidth();
+    public Level(LevelStructure levelStructure) {
+        this.levelStructure = levelStructure;
+    }
 
-    public Tile tileAt(int x, int y);
+    public void openDoor(Point doorPosition) {
+        levelStructure.setTileAt(doorPosition.x, doorPosition.y, Tile.DOOR_OPEN);
+    }
 
-    public Point getBaitPosition();
+    public void closeDoor(Point doorPosition) {
+        levelStructure.setTileAt(doorPosition.x, doorPosition.y, Tile.DOOR_CLOSED);
+    }
 
-    public Collection<Point> getStartPositions();
+    public void addMouse(Mouse mouse) {
+        mice.add(mouse);
+    }
 
-    public Collection<MouseState> getMice();
+    @Override
+    public int getHeight() {
+        return levelStructure.getHeight();
+    }
+
+    @Override
+    public int getWidth() {
+        return levelStructure.getWidth();
+    }
+
+    @Override
+    public Tile tileAt(int x, int y) {
+        return levelStructure.tileAt(x, y);
+    }
+
+    @Override
+    public void setTileAt(int x, int y, Tile tile) {
+        levelStructure.setTileAt(x, y, tile);
+    }
+
+    @Override
+    public Point getBaitPosition() {
+        return levelStructure.getBaitPosition();
+    }
+
+    @Override
+    public Collection<Point> getStartPositions() {
+        return levelStructure.getStartPositions();
+    }
+
+    @Override
+    public GameStartMessage toGameStartMessage() {
+        return levelStructure.toGameStartMessage();
+    }
+
+    public List<Mouse> getMice() {
+        return mice;
+    }
 }

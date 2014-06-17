@@ -1,14 +1,13 @@
 package mouse.server.simulation;
 
-import java.awt.Point;
+import mouse.shared.LevelStructure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import mouse.shared.Level;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides some convenience methods for Level User: Markus Date: 08.04.14
@@ -17,26 +16,25 @@ public class LevelAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(LevelAdapter.class);
 
-    private Level level;
+    private final LevelStructure levelStructure;
 
-    public LevelAdapter(Level level) {
-        log.debug("LevelAdapter created.");
-        this.level = level;
+    public LevelAdapter(LevelStructure levelStructure) {
+        this.levelStructure = levelStructure;
     }
 
-    public Level getLevel() {
-        return level;
+    public LevelStructure getLevelStructure() {
+        return levelStructure;
     }
 
     public boolean isDirectionFeasible(Point position, Orientation direction) {
         Point checkedPosition = OrientationHelper.getInstance().applyOrientation(position, direction);
 
         if (checkedPosition.x < 0 || checkedPosition.y < 0
-                || checkedPosition.x >= level.getWidth() || checkedPosition.y >= level.getHeight()) {
+                || checkedPosition.x >= levelStructure.getWidth() || checkedPosition.y >= levelStructure.getHeight()) {
             return false;
         }
 
-        switch (level.tileAt(checkedPosition.x, checkedPosition.y)) {
+        switch (levelStructure.tileAt(checkedPosition.x, checkedPosition.y)) {
             case DOOR_CLOSED:
                 return false;
             case WALL:

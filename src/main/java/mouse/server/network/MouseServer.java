@@ -1,28 +1,29 @@
 package mouse.server.network;
 
-import java.awt.Point;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import mouse.server.EventQueue;
 import mouse.server.ServerConfiguration;
 import mouse.server.event.CloseDoorEvent;
 import mouse.server.event.GameLogicEventListener;
 import mouse.server.event.OpenDoorEvent;
 import mouse.server.event.PlayerJoinedEvent;
+import mouse.server.level.LevelLoader;
 import mouse.server.simulation.LevelAdapter;
 import mouse.server.simulation.Mouse;
-import mouse.server.simulation.ServerLevel;
 import mouse.server.simulation.Simulator;
+import mouse.shared.Level;
 import mouse.shared.messages.DoorStateChangedMessage;
 import mouse.shared.messages.GameStartMessage;
 import mouse.shared.messages.MouseMovedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The server for our mouse game. Use this class inside the client to create a
@@ -39,7 +40,7 @@ public class MouseServer implements GameLogicEventListener {
     private final Broadcaster broadcaster;
     private final ServerConfiguration serverConfiguration;
     private final EventQueue eventQueue;
-    private final ServerLevel level;/*Not final ?- allow loading a new level?*/
+    private final Level level;
 
     private Simulator simulator;/*I understand that EventQueueTask is central but it should not be responsible for logic!*/
 
@@ -50,7 +51,7 @@ public class MouseServer implements GameLogicEventListener {
         serverConfiguration = ServerConfiguration.load();
         broadcaster = new Broadcaster(serverConfiguration);
         eventQueue = new EventQueue(serverConfiguration.getTickInterval());
-        level = new ServerLevel(serverConfiguration.getLevelID());
+        level = LevelLoader.loadLevel(serverConfiguration.getLevel());
         clientList = new ArrayList<ClientConnectionHandler>();
     }
 
@@ -159,8 +160,8 @@ public class MouseServer implements GameLogicEventListener {
         level.addMouse(new Mouse(startPosition, new LevelAdapter(level)));
         if (level.getMice().size() == serverConfiguration.getPlayerCount()) {
             log.info("Sufficient Players - Game started!");
-            simulator = new Simulator(level.getMiceList());
-            GameStartMessage m = ServerLevel.toGameStartMessage(level);
+            simulator = new Simulator(level.getMice());
+            GameStartMessage m = level.toGameStartMessage();
             Iterator<ClientConnectionHandler> itc = clientList.iterator();
             while (itc.hasNext()) {
                 itc.next().sendMessage(m);

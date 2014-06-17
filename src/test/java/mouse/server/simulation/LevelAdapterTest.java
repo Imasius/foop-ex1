@@ -1,32 +1,31 @@
 package mouse.server.simulation;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import java.awt.Point;
-
-import mouse.shared.Level;
+import mouse.shared.LevelStructure;
 import mouse.shared.Tile;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.awt.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * 
  * @author Markus Scherer, 8.4
  */
 public class LevelAdapterTest {
-	private Level level = null;
+	private LevelStructure levelStructure = null;
 	private LevelAdapter adapter = null;
 	private Point position = null;
 	
 	@Before
 	public void setUp() throws Exception {
-		level = mock(Level.class);
-		adapter = new LevelAdapter(level);
+		levelStructure = mock(LevelStructure.class);
+		adapter = new LevelAdapter(levelStructure);
 		position = new Point(1, 1);
 	}
 
@@ -36,9 +35,9 @@ public class LevelAdapterTest {
 	
 	
 	private void testHelper(int xDiff, int yDiff, Tile tileType, Orientation direction, boolean expected) {
-		when(level.tileAt(position.x + xDiff, position.y + yDiff)).thenReturn(tileType);
-		when(level.getHeight()).thenReturn(3);
-		when(level.getWidth()).thenReturn(3);
+		when(levelStructure.tileAt(position.x + xDiff, position.y + yDiff)).thenReturn(tileType);
+		when(levelStructure.getHeight()).thenReturn(3);
+		when(levelStructure.getWidth()).thenReturn(3);
 		boolean result = adapter.isDirectionFeasible(position, direction);
 	
 		if(expected) {
@@ -131,7 +130,7 @@ public class LevelAdapterTest {
 	
 	@Test
 	public void widthOutsideRangeIsInfeasible() {
-		when(level.getWidth()).thenReturn(2);
+		when(levelStructure.getWidth()).thenReturn(2);
 		boolean result = adapter.isDirectionFeasible(position, Orientation.EAST);
 		
 		assertFalse("Values outside range should be infeasible!", result);
@@ -139,7 +138,7 @@ public class LevelAdapterTest {
 	
 	@Test
 	public void heightOutsideRangeIsInfeasible() {
-		when(level.getWidth()).thenReturn(2);
+		when(levelStructure.getWidth()).thenReturn(2);
 		boolean result = adapter.isDirectionFeasible(position, Orientation.SOUTH);
 		
 		assertFalse("Values outside range should be infeasible!", result);

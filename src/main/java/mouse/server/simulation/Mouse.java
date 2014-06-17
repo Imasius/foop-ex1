@@ -1,9 +1,9 @@
 package mouse.server.simulation;
 
-import java.awt.Point;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 
 /**
  * Represents a Mouse in the simulation component. User: Markus Date: 02.04.14
@@ -28,7 +28,7 @@ public class Mouse {
     }
 
     public Orientation move() {
-        Point bait = levelAdapter.getLevel().getBaitPosition();
+        Point bait = levelAdapter.getLevelStructure().getBaitPosition();
         Orientation ret = null;
         switch (state) {
             case MOVING_DIRECTED:
