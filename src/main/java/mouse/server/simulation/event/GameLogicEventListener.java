@@ -1,4 +1,4 @@
-package mouse.server.event;
+package mouse.server.simulation.event;
 
 /**
  * The GameLogicEventListener hierachy encapsulates all events not handled by

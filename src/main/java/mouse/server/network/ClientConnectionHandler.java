@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import mouse.shared.messages.Message;
+import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +22,10 @@ public class ClientConnectionHandler extends Thread {
     private static AtomicInteger idCounter = new AtomicInteger(0);
 
     private final Socket socket;
-    private final BlockingQueue<MessageWrapper> queue;
+    private final BlockingQueue<ClientToServerMessage> queue;
     private final int clientId;
 
-    public ClientConnectionHandler(Socket socket, BlockingQueue<MessageWrapper> queue) {
+    public ClientConnectionHandler(Socket socket, BlockingQueue<ClientToServerMessage> queue) {
         this.socket = socket;
         this.queue = queue;
         this.clientId = idCounter.getAndIncrement();

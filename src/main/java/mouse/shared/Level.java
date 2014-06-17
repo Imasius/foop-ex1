@@ -1,7 +1,7 @@
 package mouse.shared;
 
 import mouse.server.simulation.Mouse;
-import mouse.shared.messages.GameStartMessage;
+import mouse.shared.messages.serverToClient.GameStartMessage;
 
 import java.awt.*;
 import java.util.ArrayList;

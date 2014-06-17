@@ -1,10 +1,9 @@
 package mouse.server;
 
-import mouse.server.network.MessageWrapper;
-
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
-import mouse.server.event.GameLogicEventListener;
+import mouse.server.simulation.event.GameLogicEventListener;
+import mouse.shared.messages.clientToServer.ClientToServerMessage;
 
 /**
  * User: Simon Date: 04.06.2014
@@ -30,7 +29,7 @@ public class EventQueue {
         timer.cancel();
     }
 
-    public BlockingQueue<MessageWrapper> getQueue() {
+    public BlockingQueue<ClientToServerMessage> getQueue() {
         return eventQueueTask.getQueue();
     }
 

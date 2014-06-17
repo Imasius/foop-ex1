@@ -1,6 +1,6 @@
 package mouse.shared;
 
-import mouse.shared.messages.GameStartMessage;
+import mouse.shared.messages.serverToClient.GameStartMessage;
 
 import java.awt.*;
 import java.util.Collection;

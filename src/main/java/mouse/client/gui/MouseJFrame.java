@@ -1,13 +1,17 @@
 package mouse.client.gui;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.*;
 
 import mouse.client.network.ServerConnection;
 import mouse.client.network.ServerConnectionListener;
+import mouse.server.simulation.Mouse;
+import mouse.shared.Door;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
+import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,31 +26,29 @@ public class MouseJFrame extends JFrame {
 
         @Override
         public void onDoorClicked(Point door, boolean isClosed) {
-            connection.tryChangeDoorState(door, !isClosed); 
-            log.debug("Clicked on a door");
+            connection.requestDoorState(door, !isClosed);
+            log.debug("Clicked on a door @" + door.x + "," + door.y);
         }
     }
 
-    class LocalServerConnectionListener implements ServerConnectionListener {
+    class LocalServerConnectionListener implements ServerToClientMessageListener {
 
-        @Override
-        public void onMouseMoved(int mouseIdx, MouseState newState) {
+        public void handleUpdateMice(ArrayList<Mouse> mice) {
             mcCanvas.repaint();
-        }                                                                // handled by level
+        }
 
-        @Override
-        public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
+        public void handleUpdateDoors(ArrayList<Door> doors) {
             mcCanvas.repaint();
-        }                                                       // handled by level        
+        }
 
-        @Override
-        public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+        public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
             mcCanvas.repaint();
             log.debug("Game started");
-        } // handled by level
+        }
 
-        @Override
-        public void onGameOver() {
+        public void handleGameOver() {
+            log.debug("Game over");
+            mcCanvas.repaint();
             JOptionPane.showMessageDialog(null, "Game over");
         }
     }

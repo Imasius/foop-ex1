@@ -4,7 +4,7 @@ import mouse.server.simulation.Mouse;
 import mouse.shared.LevelStructure;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
-import mouse.shared.messages.GameStartMessage;
+import mouse.shared.messages.serverToClient.GameStartMessage;
 
 import java.awt.*;
 import java.util.ArrayList;

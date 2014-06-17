@@ -5,18 +5,21 @@ import mouse.server.simulation.Orientation;
 import mouse.shared.LevelStructure;
 import mouse.shared.MouseState;
 import mouse.shared.Tile;
-import mouse.shared.messages.GameStartMessage;
+import mouse.shared.messages.serverToClient.GameStartMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import mouse.server.simulation.Mouse;
+import mouse.shared.Door;
+import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 
 /**
  * Created by Florian on 2014-04-12.
  */
-public class ClientLevel implements LevelStructure, ServerConnectionListener {
+public class ClientLevel implements LevelStructure, ServerToClientMessageListener {
 
     Tile[][] tiles;
     Point baitPosition;
@@ -97,6 +100,9 @@ public class ClientLevel implements LevelStructure, ServerConnectionListener {
 
     @Override
     public void onMouseMoved(int mouseIdx, MouseState newState) {
+        if (mice.size() <= mouseIdx) {
+            log.debug("Event for mouse ID:{} reveived, but there are only {} mice", mouseIdx, mice.size());
+        }
         MouseState st = mice.get(mouseIdx);
         mice.set(mouseIdx, newState);
         log.debug("Mouse has moved from:{},{} to {},{}", st.getPosition().x, st.getPosition().y, newState.getPosition().x, newState.getPosition().y);
@@ -121,5 +127,24 @@ public class ClientLevel implements LevelStructure, ServerConnectionListener {
         this.startPositions = startPositions;
         this.mice.clear();
         this.mice.addAll(mice);
+    }
+
+    public void handleUpdateMice(ArrayList<Mouse> mice) {
+        for(Mouse m:mice){
+            m.
+        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void handleUpdateDoors(ArrayList<Door> doors) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void handleGameOver() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

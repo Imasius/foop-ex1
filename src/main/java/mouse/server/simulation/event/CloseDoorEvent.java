@@ -1,4 +1,4 @@
-package mouse.server.event;
+package mouse.server.simulation.event;
 
 import java.awt.Point;
 

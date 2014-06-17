@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import mouse.server.event.GameLogicEventListener;
+import mouse.server.simulation.event.GameLogicEventListener;
 
 /**
  * Simulates the Game Logic. User: Markus Date: 05.05.14

@@ -4,29 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by Florian on 2014-04-12.
+ * Created by Florian on 2014-04-12. Split into ClientServer by Kevin 20014-17-06
  */
-public class MessageParser {
+public abstract class MessageParser {
+
     private static final Logger log = LoggerFactory.getLogger(MessageParser.class);
 
-    private final List<MessageListener> listeners;
-
-    public MessageParser(){
-        this.listeners = new ArrayList<MessageListener>();
-    }
-
-    public void addListener(MessageListener listener) {
-        listeners.add(listener);
-    }
-    public void removeListener(MessageListener listener) {
-        listeners.remove(listener);
-    }
-
-    public void parseMessage(InputStream stream){
-        Message.fromStream(stream).alertListeners(this.listeners);
-    }
+    public abstract void parseMessage(InputStream stream);
 }

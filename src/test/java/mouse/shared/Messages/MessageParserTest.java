@@ -1,13 +1,13 @@
 package mouse.shared.Messages;
 
-import mouse.shared.messages.GameOverMessage;
-import mouse.shared.messages.MouseMovedMessage;
+import mouse.shared.messages.serverToClient.GameOverMessage;
+import mouse.shared.messages.UpdateMiceMessage;
 import mouse.shared.messages.MessageParser;
-import mouse.shared.messages.DoorStateChangedMessage;
+import mouse.shared.messages.UpdateDoorsMessage;
 import mouse.shared.messages.Message;
-import mouse.shared.messages.TryChangeDoorStateMessage;
+import mouse.shared.messages.clientToServer.RequestDoorStateMessage;
 import mouse.shared.messages.MessageListener;
-import mouse.shared.messages.GameStartMessage;
+import mouse.shared.messages.serverToClient.GameStartMessage;
 import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;
@@ -80,7 +80,7 @@ public class MessageParserTest {
             @Override public void onTryChangeDoorState(Point doorPosition, boolean tryClose) { }
             @Override public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) { }
         };
-        messageTest(listenerTest, new MouseMovedMessage(1, new MouseState(new Point(2,3),Orientation.EAST)));
+        messageTest(listenerTest, new UpdateMiceMessage(1, new MouseState(new Point(2,3),Orientation.EAST)));
     }
     @Test
     public void doorStateChangedMessageIntegrity() {
@@ -95,7 +95,7 @@ public class MessageParserTest {
             @Override public void onTryChangeDoorState(Point doorPosition, boolean tryClose) { }
             @Override public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) { }
         };
-        messageTest(listenerTest, new DoorStateChangedMessage(new Point(1,2),true));
+        messageTest(listenerTest, new UpdateDoorsMessage(new Point(1,2),true));
     }
     @Test
     public void tryChangeDoorStateMessageIntegrity() {
@@ -110,7 +110,7 @@ public class MessageParserTest {
             }
             @Override public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) { }
         };
-        messageTest(listenerTest, new TryChangeDoorStateMessage(new Point(1,2),true));
+        messageTest(listenerTest, new RequestDoorStateMessage(new Point(1,2),true));
     }
     @Test
     public void gameStartMessageIntegrity() {
