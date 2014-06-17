@@ -2,7 +2,7 @@ package mouse.server.level;
 
 import mouse.server.simulation.Mouse;
 import mouse.shared.LevelStructure;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 import mouse.shared.messages.serverToClient.GameStartMessage;
 
@@ -63,9 +63,9 @@ public class FileLevel implements LevelStructure {
 
     @Override
     public GameStartMessage toGameStartMessage() {
-        ArrayList<MouseState> states = new ArrayList<MouseState>();
+        ArrayList<Mouse> states = new ArrayList<Mouse>();
         for (Mouse m : mice) {
-            states.add(new MouseState(m.getPosition(), m.getLastOrientation()));
+            states.add(new Mouse(m.getPosition(), m.getLastOrientation()));
         }
 
         return new GameStartMessage(tiles, baitPosition, startPositions, states);

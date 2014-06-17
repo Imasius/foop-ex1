@@ -1,5 +1,6 @@
 package mouse.server.simulation;
 
+import mouse.shared.Orientation;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;

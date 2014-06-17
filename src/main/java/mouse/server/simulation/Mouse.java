@@ -1,5 +1,6 @@
 package mouse.server.simulation;
 
+import mouse.shared.Orientation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,20 +12,21 @@ import java.awt.*;
 public class Mouse {
 
     private Point position;
-    private MouseState state;
+    private MouseBehaviour state;
     private LevelAdapter levelAdapter;
     private int randomCounter;
     private Orientation randomDirection;
     private Orientation lastOrientation = Orientation.NORTH;
+    private int playerIndex;
 
     private static final Logger log = LoggerFactory.getLogger(Mouse.class);
 
-    public Mouse(Point position, LevelAdapter level) {
-        log.debug("Mouse created at {}.", position);
-
-        state = MouseState.MOVING_DIRECTED;
+    public Mouse(Point position, LevelAdapter level, int playerIndex) {
+        log.debug("Mouse #{} created at {}.", playerIndex, position);
+        state = MouseBehaviour.MOVING_DIRECTED;
         this.position = position;
         this.levelAdapter = level;
+        this.playerIndex = playerIndex;
     }
 
     public Orientation move() {
@@ -50,7 +52,7 @@ public class Mouse {
                 randomCounter--;
 
                 if (randomCounter <= 0) {
-                    state = MouseState.MOVING_DIRECTED;
+                    state = MouseBehaviour.MOVING_DIRECTED;
                 }
                 break;
         }
@@ -67,8 +69,18 @@ public class Mouse {
         return position;
     }
 
+    /**
+     * It is possible that a subset of mice is transferred, a index is necessary
+     * therefore to know which mouse to update
+     *
+     * @return the player number of the mouse.
+     */
+    public int getIndex() {
+        return playerIndex;
+    }
+
     public void confuse() {
-        state = MouseState.MOVING_RANDOM;
+        state = MouseBehaviour.MOVING_RANDOM;
         randomDirection = levelAdapter.getRandomFeasibleDirection(position);
         randomCounter = 4;
     }

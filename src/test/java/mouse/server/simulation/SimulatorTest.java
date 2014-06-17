@@ -1,5 +1,6 @@
 package mouse.server.simulation;
 
+import mouse.shared.Orientation;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
@@ -16,75 +17,76 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SimulatorTest {
-	private Mouse m1;
-	private Mouse m2;
-	private Mouse m3;
-	private Mouse m4;
 
-	private Simulator simulator;
+    private Mouse m1;
+    private Mouse m2;
+    private Mouse m3;
+    private Mouse m4;
 
-	@Before
-	public void setUp() throws Exception {
-		m1 = spy(new Mouse(new Point(0, 0), null));
-		m2 = spy(new Mouse(new Point(1, 0), null));
-		m3 = spy(new Mouse(new Point(6, 6), null));
-		m4 = spy(new Mouse(new Point(3, 3), null));
+    private Simulator simulator;
 
-		List<Mouse> mice = new ArrayList<Mouse>();
-		mice.add(m1);
-		mice.add(m2);
-		mice.add(m3);
-		mice.add(m4);
+    @Before
+    public void setUp() throws Exception {
+        m1 = spy(new Mouse(new Point(0, 0), null, 0));
+        m2 = spy(new Mouse(new Point(1, 0), null, 1));
+        m3 = spy(new Mouse(new Point(6, 6), null, 2));
+        m4 = spy(new Mouse(new Point(3, 3), null, 3));
 
-		doNothing().when(m1).confuse();
-		doNothing().when(m2).confuse();
-		doNothing().when(m3).confuse();
-		doNothing().when(m4).confuse();
+        List<Mouse> mice = new ArrayList<Mouse>();
+        mice.add(m1);
+        mice.add(m2);
+        mice.add(m3);
+        mice.add(m4);
 
-		simulator = new Simulator(mice);
-	}
+        doNothing().when(m1).confuse();
+        doNothing().when(m2).confuse();
+        doNothing().when(m3).confuse();
+        doNothing().when(m4).confuse();
 
-	@After
-	public void tearDown() throws Exception {
-	}
+        simulator = new Simulator(mice);
+    }
 
-	@Test
-	public void testLegitimateConfusionDirectlyNeighbouring() {		
-		doReturn(Orientation.EAST).when(m1).move();
-		doReturn(Orientation.WEST).when(m2).move();
-		doReturn(Orientation.WEST).when(m3).move();
-		doReturn(Orientation.WEST).when(m4).move();
-	
-		simulator.simulate();
+    @After
+    public void tearDown() throws Exception {
+    }
 
-		verify(m1, times(1)).confuse();
-		verify(m2, times(1)).confuse();
-		verify(m3, never()).confuse();
-		verify(m4, never()).confuse();
-		verify(m1, never()).applyMotion(Orientation.EAST);
-		verify(m2, never()).applyMotion(Orientation.WEST);
-		verify(m3, times(1)).applyMotion(Orientation.WEST);
-		verify(m4, times(1)).applyMotion(Orientation.WEST);
-	}
-	
-	@Test
-	public void testLegitimateConfusionNeighbouringAfterMove() {
-		m2.applyMotion(Orientation.EAST);
+    @Test
+    public void testLegitimateConfusionDirectlyNeighbouring() {
+        doReturn(Orientation.EAST).when(m1).move();
+        doReturn(Orientation.WEST).when(m2).move();
+        doReturn(Orientation.WEST).when(m3).move();
+        doReturn(Orientation.WEST).when(m4).move();
 
-		doReturn(Orientation.EAST).when(m1).move();
-		doReturn(Orientation.WEST).when(m2).move();
-		doReturn(Orientation.WEST).when(m3).move();
-		doReturn(Orientation.WEST).when(m4).move();
+        simulator.simulate();
 
-		simulator.simulate();
+        verify(m1, times(1)).confuse();
+        verify(m2, times(1)).confuse();
+        verify(m3, never()).confuse();
+        verify(m4, never()).confuse();
+        verify(m1, never()).applyMotion(Orientation.EAST);
+        verify(m2, never()).applyMotion(Orientation.WEST);
+        verify(m3, times(1)).applyMotion(Orientation.WEST);
+        verify(m4, times(1)).applyMotion(Orientation.WEST);
+    }
 
-		verify(m1, times(1)).confuse();
-		verify(m2, times(1)).confuse();
-		verify(m3, never()).confuse();
-		verify(m4, never()).confuse();
-		verify(m1, times(1)).applyMotion(Orientation.EAST);
-		verify(m2, never()).applyMotion(Orientation.WEST);
-		verify(m3, times(1)).applyMotion(Orientation.WEST);
-		verify(m4, times(1)).applyMotion(Orientation.WEST);
-	}
+    @Test
+    public void testLegitimateConfusionNeighbouringAfterMove() {
+        m2.applyMotion(Orientation.EAST);
+
+        doReturn(Orientation.EAST).when(m1).move();
+        doReturn(Orientation.WEST).when(m2).move();
+        doReturn(Orientation.WEST).when(m3).move();
+        doReturn(Orientation.WEST).when(m4).move();
+
+        simulator.simulate();
+
+        verify(m1, times(1)).confuse();
+        verify(m2, times(1)).confuse();
+        verify(m3, never()).confuse();
+        verify(m4, never()).confuse();
+        verify(m1, times(1)).applyMotion(Orientation.EAST);
+        verify(m2, never()).applyMotion(Orientation.WEST);
+        verify(m3, times(1)).applyMotion(Orientation.WEST);
+        verify(m4, times(1)).applyMotion(Orientation.WEST);
+    }
 }

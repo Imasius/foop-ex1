@@ -15,6 +15,10 @@ public class UpdateMiceMessage extends ServerToClientMessage {
         this.mice = mice;
     }
 
+    public ArrayList<Mouse> getMice() {
+        return mice;
+    }
+
     @Override
     public void alertListeners(Iterable<? extends ServerToClientMessageListener> observers) {
         for (ServerToClientMessageListener observer : observers) {

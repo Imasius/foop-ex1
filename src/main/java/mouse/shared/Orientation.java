@@ -1,4 +1,4 @@
-package mouse.server.simulation;
+package mouse.shared;
 
 /**
  * The cardinal directions.

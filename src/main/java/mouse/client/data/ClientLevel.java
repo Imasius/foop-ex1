@@ -1,9 +1,9 @@
 package mouse.client.data;
 
 import mouse.client.network.ServerConnectionListener;
-import mouse.server.simulation.Orientation;
+import mouse.shared.Orientation;
 import mouse.shared.LevelStructure;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 import mouse.shared.messages.serverToClient.GameStartMessage;
 import org.slf4j.Logger;
@@ -21,10 +21,10 @@ import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
  */
 public class ClientLevel implements LevelStructure, ServerToClientMessageListener {
 
-    Tile[][] tiles;
-    Point baitPosition;
-    Collection<Point> startPositions;
-    ArrayList<MouseState> mice;
+    private Tile[][] tiles;
+    private Point baitPosition;
+    private Collection<Point> startPositions;
+    private ArrayList<Mouse> mice;
     private static final Logger log = LoggerFactory.getLogger(ClientLevel.class);
 
     public ClientLevel() {
@@ -50,11 +50,11 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
         tiles[4][4] = Tile.DOOR_CLOSED;
         tiles[10][4] = Tile.DOOR_OPEN;
 
-        mice = new ArrayList<MouseState>();
-        mice.add(new MouseState(new Point(7, 1), Orientation.EAST));
-        mice.add(new MouseState(new Point(7, 2), Orientation.NORTH));
-        mice.add(new MouseState(new Point(7, 3), Orientation.WEST));
-        mice.add(new MouseState(new Point(7, 4), Orientation.SOUTH));
+        mice = new ArrayList<Mouse>();
+        mice.add(new Mouse(new Point(7, 1), Orientation.EAST));
+        mice.add(new Mouse(new Point(7, 2), Orientation.NORTH));
+        mice.add(new Mouse(new Point(7, 3), Orientation.WEST));
+        mice.add(new Mouse(new Point(7, 4), Orientation.SOUTH));
 
         baitPosition = new Point(5, 5);
     }
@@ -94,16 +94,16 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
         return new GameStartMessage(tiles, baitPosition, startPositions, mice);
     }
 
-    public Collection<MouseState> getMice() {
+    public Collection<Mouse> getMice() {
         return mice;
     }
 
     @Override
-    public void onMouseMoved(int mouseIdx, MouseState newState) {
+    public void onMouseMoved(int mouseIdx, Mouse newState) {
         if (mice.size() <= mouseIdx) {
             log.debug("Event for mouse ID:{} reveived, but there are only {} mice", mouseIdx, mice.size());
         }
-        MouseState st = mice.get(mouseIdx);
+        Mouse st = mice.get(mouseIdx);
         mice.set(mouseIdx, newState);
         log.debug("Mouse has moved from:{},{} to {},{}", st.getPosition().x, st.getPosition().y, newState.getPosition().x, newState.getPosition().y);
     }
@@ -121,7 +121,7 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
     }
 
     @Override
-    public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+    public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
         this.tiles = tiles;
         this.baitPosition = baitPosition;
         this.startPositions = startPositions;
@@ -130,7 +130,8 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
     }
 
     public void handleUpdateMice(ArrayList<Mouse> mice) {
-        for(Mouse m:mice){
+        for (Mouse m : mice) {
+            mice.set(m., m)
             m.
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -140,7 +141,7 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+    public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

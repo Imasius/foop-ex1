@@ -6,10 +6,9 @@ import java.util.Collection;
 import javax.swing.*;
 
 import mouse.client.network.ServerConnection;
-import mouse.client.network.ServerConnectionListener;
 import mouse.server.simulation.Mouse;
 import mouse.shared.Door;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class MouseJFrame extends JFrame {
             mcCanvas.repaint();
         }
 
-        public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+        public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
             mcCanvas.repaint();
             log.debug("Game started");
         }

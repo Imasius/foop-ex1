@@ -1,19 +1,17 @@
 package mouse.shared;
 
-import mouse.server.simulation.Orientation;
-
 import java.awt.*;
 import java.io.Serializable;
 
 /**
  * Created by Florian on 2014-04-13.
  */
-public class MouseState implements Serializable {
+public class Mouse implements Serializable {
 
     private Point position;
     private Orientation orientation;
 
-    public MouseState(Point position, Orientation orientation) {
+    public Mouse(Point position, Orientation orientation) {
         this.position = position;
         this.orientation = orientation;
     }
@@ -35,7 +33,7 @@ public class MouseState implements Serializable {
             return false;
         }
 
-        MouseState that = (MouseState) o;
+        Mouse that = (Mouse) o;
 
         if (orientation != that.orientation) {
             return false;

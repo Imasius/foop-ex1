@@ -1,6 +1,6 @@
 package mouse.shared.messages.serverToClient;
 
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 
 import java.awt.*;
@@ -16,16 +16,16 @@ public class GameStartMessage extends ServerToClientMessage implements Serializa
     private final Tile[][] tiles;
     private final Point baitPosition;
     private final Collection<Point> startPositions;
-    private final Collection<MouseState> mice;
+    private final Collection<Mouse> mice;
 
-    public GameStartMessage(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+    public GameStartMessage(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
         this.tiles = tiles;
         this.baitPosition = baitPosition;
         this.startPositions = startPositions;
         this.mice = mice;
     }
 
-    public Collection<MouseState> getMice() {
+    public Collection<Mouse> getMice() {
         return mice;
     }
 

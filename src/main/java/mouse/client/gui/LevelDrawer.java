@@ -2,7 +2,7 @@ package mouse.client.gui;
 
 import mouse.client.data.ClientLevel;
 import mouse.client.gui.helper.ImageBlender;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,7 +155,7 @@ public class LevelDrawer implements Drawable {
 
         // draw mice
         i = 0;
-        for (MouseState mouse : level.getMice()){
+        for (Mouse mouse : level.getMice()){
 
             AffineTransform tform = new AffineTransform();
 

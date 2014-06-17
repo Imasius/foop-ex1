@@ -1,5 +1,6 @@
 package mouse.server.simulation;
 
+import mouse.shared.Orientation;
 import mouse.shared.LevelStructure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

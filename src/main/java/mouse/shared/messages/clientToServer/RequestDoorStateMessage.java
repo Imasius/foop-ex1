@@ -14,6 +14,10 @@ public class RequestDoorStateMessage extends ClientToServerMessage {
         this.door = door;
     }
 
+    public Door getDoor() {
+        return door;
+    }
+
     @Override
     public void alertListeners(Iterable<? extends ClientToServerMessageListener> observers) {
         for (ClientToServerMessageListener observer : observers) {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import mouse.server.simulation.Mouse;
 import mouse.shared.Door;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 
 /**
@@ -22,7 +22,7 @@ public interface ServerToClientMessageListener {
     void handleUpdateDoors(ArrayList<Door> doors);
 
     //A new game has started
-    void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice);
+    void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice);
 
     //Game is over
     void handleGameOver();

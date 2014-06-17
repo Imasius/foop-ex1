@@ -1,7 +1,7 @@
 package mouse.client.network;
 
 import mouse.shared.messages.clientToServer.RequestDoorStateMessage;
-import mouse.shared.MouseState;
+import mouse.shared.Mouse;
 import mouse.shared.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class ServerConnection implements Runnable {
                 }
             }
 
-            public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<MouseState> mice) {
+            public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
                 for (ServerToClientMessageListener listener : listeners) {
                     listener.handleGameStart(tiles, baitPosition, startPositions, mice);
                 }

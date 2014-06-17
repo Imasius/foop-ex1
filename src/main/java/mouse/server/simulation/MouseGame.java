@@ -13,6 +13,8 @@ import mouse.shared.Level;
 import mouse.shared.messages.UpdateDoorsMessage;
 import mouse.shared.messages.serverToClient.GameStartMessage;
 import mouse.shared.messages.UpdateMiceMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MouseGame handles all information of a game and is the eventhandler for
@@ -24,6 +26,7 @@ import mouse.shared.messages.UpdateMiceMessage;
  */
 public class MouseGame implements GameLogicEventListener {
 
+    private static final Logger log = LoggerFactory.getLogger(MouseGame.class);
     private final Level level;
     private Simulator simulator;/*I understand that EventQueueTask is central but it should not be responsible for logic!*/
 
@@ -63,7 +66,7 @@ public class MouseGame implements GameLogicEventListener {
     public void handleTick() {
         /*TODO: Send all mousepositions as one message not as several this is very inefficient */
         if (simulator != null) {
-            List<mouse.shared.MouseState> newStates = simulator.simulate();
+            List<mouse.shared.Mouse> newStates = simulator.simulate();
             for (int idx = 0; idx < newStates.size(); idx++) {
                 UpdateMiceMessage m = new UpdateMiceMessage(idx, newStates.get(idx));
                 Iterator<ClientConnectionHandler> it = clientList.iterator();
@@ -94,7 +97,7 @@ public class MouseGame implements GameLogicEventListener {
         while (it.hasNext()) {
             startPosition = it.next();
         }
-        level.addMouse(new Mouse(startPosition, new LevelAdapter(level)));
+        level.addMouse(new Mouse(startPosition, new LevelAdapter(level), level.getMice().size()));
         if (level.getMice().size() == serverConfiguration.getPlayerCount()) {
             log.info("Sufficient Players - Game started!");
             simulator = new Simulator(level.getMice());

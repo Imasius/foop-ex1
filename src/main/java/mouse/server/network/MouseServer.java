@@ -2,27 +2,13 @@ package mouse.server.network;
 
 import mouse.server.EventQueue;
 import mouse.server.ServerConfiguration;
-import mouse.server.simulation.event.CloseDoorEvent;
-import mouse.server.simulation.event.GameLogicEventListener;
-import mouse.server.simulation.event.OpenDoorEvent;
-import mouse.server.simulation.event.PlayerJoinedEvent;
 import mouse.server.level.LevelLoader;
-import mouse.server.simulation.LevelAdapter;
-import mouse.server.simulation.Mouse;
-import mouse.server.simulation.Simulator;
-import mouse.shared.Level;
-import mouse.shared.messages.UpdateDoorsMessage;
-import mouse.shared.messages.serverToClient.GameStartMessage;
-import mouse.shared.messages.UpdateMiceMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import mouse.server.network.event.DoorsChangedEvent;
 import mouse.server.network.event.LevelChangedEvent;
