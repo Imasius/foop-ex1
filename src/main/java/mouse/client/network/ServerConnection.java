@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import mouse.server.simulation.Mouse;
+import mouse.server.simulation.SimulationMouse;
 import mouse.shared.Door;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;

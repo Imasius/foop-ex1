@@ -3,7 +3,7 @@ package mouse.shared.messages.serverToClient;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import mouse.server.simulation.Mouse;
+import mouse.server.simulation.SimulationMouse;
 import mouse.shared.Door;
 import mouse.shared.Mouse;
 import mouse.shared.Tile;

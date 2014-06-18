@@ -1,6 +1,6 @@
 package mouse.server.level;
 
-import mouse.server.simulation.Mouse;
+import mouse.server.simulation.SimulationMouse;
 import mouse.shared.LevelStructure;
 import mouse.shared.Mouse;
 import mouse.shared.Tile;
@@ -30,7 +30,7 @@ public class FileLevel implements LevelStructure {
 
     private List<Point> startPositions = new ArrayList<Point>();
     private Point baitPosition;
-    private List<Mouse> mice = new ArrayList<Mouse>();
+    private List<SimulationMouse> mice = new ArrayList<SimulationMouse>();
 
     @Override
     public int getHeight() {
@@ -63,9 +63,9 @@ public class FileLevel implements LevelStructure {
 
     @Override
     public GameStartMessage toGameStartMessage() {
-        ArrayList<Mouse> states = new ArrayList<Mouse>();
-        for (Mouse m : mice) {
-            states.add(new Mouse(m.getPosition(), m.getLastOrientation()));
+        ArrayList<SimulationMouse> states = new ArrayList<SimulationMouse>();
+        for (SimulationMouse m : mice) {
+            states.add(new SimulationMouse(m.getPosition(), m.getLastOrientation()));
         }
 
         return new GameStartMessage(tiles, baitPosition, startPositions, states);

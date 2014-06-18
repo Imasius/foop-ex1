@@ -1,7 +1,7 @@
 package mouse.shared.messages.serverToClient;
 
 import java.util.ArrayList;
-import mouse.server.simulation.Mouse;
+import mouse.server.simulation.SimulationMouse;
 
 /**
  *
@@ -9,13 +9,13 @@ import mouse.server.simulation.Mouse;
  */
 public class UpdateMiceMessage extends ServerToClientMessage {
 
-    private final ArrayList<Mouse> mice;
+    private final ArrayList<SimulationMouse> mice;
 
-    public UpdateMiceMessage(ArrayList<Mouse> mice) {
+    public UpdateMiceMessage(ArrayList<SimulationMouse> mice) {
         this.mice = mice;
     }
 
-    public ArrayList<Mouse> getMice() {
+    public ArrayList<SimulationMouse> getMice() {
         return mice;
     }
 

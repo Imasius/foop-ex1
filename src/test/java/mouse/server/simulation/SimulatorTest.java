@@ -18,21 +18,21 @@ import org.junit.Test;
 
 public class SimulatorTest {
 
-    private Mouse m1;
-    private Mouse m2;
-    private Mouse m3;
-    private Mouse m4;
+    private SimulationMouse m1;
+    private SimulationMouse m2;
+    private SimulationMouse m3;
+    private SimulationMouse m4;
 
     private Simulator simulator;
 
     @Before
     public void setUp() throws Exception {
-        m1 = spy(new Mouse(new Point(0, 0), null, 0));
-        m2 = spy(new Mouse(new Point(1, 0), null, 1));
-        m3 = spy(new Mouse(new Point(6, 6), null, 2));
-        m4 = spy(new Mouse(new Point(3, 3), null, 3));
+        m1 = spy(new SimulationMouse(new Point(0, 0), null, 0));
+        m2 = spy(new SimulationMouse(new Point(1, 0), null, 1));
+        m3 = spy(new SimulationMouse(new Point(6, 6), null, 2));
+        m4 = spy(new SimulationMouse(new Point(3, 3), null, 3));
 
-        List<Mouse> mice = new ArrayList<Mouse>();
+        List<SimulationMouse> mice = new ArrayList<SimulationMouse>();
         mice.add(m1);
         mice.add(m2);
         mice.add(m3);

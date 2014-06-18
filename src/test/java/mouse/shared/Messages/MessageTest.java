@@ -6,12 +6,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
-import mouse.server.simulation.LevelAdapter;
-import mouse.server.simulation.Mouse;
-import mouse.shared.Orientation;
 import mouse.shared.Door;
 import mouse.shared.LevelStructure;
 import mouse.shared.Mouse;
+import mouse.shared.Orientation;
 import mouse.shared.Tile;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import mouse.shared.messages.clientToServer.ClientToServerMessageListener;
@@ -53,13 +51,10 @@ public class MessageTest extends TestCase {
 
     private Point baitPosition;
 
-    private List<Mouse> miceStates;
     private ArrayList<Mouse> mice;
     private ArrayList<Door> doors;
     private List<Point> startPositions;
     private Tile[][] tiles;
-    private LevelStructure level;
-    private LevelAdapter adapter;
 
     @Mock
     private ClientToServerMessageListener clientToServerMessageListener;
@@ -82,27 +77,18 @@ public class MessageTest extends TestCase {
         tiles[1][0] = Tile.WALL;
         tiles[1][1] = Tile.DOOR_CLOSED;
 
-        level = mock(LevelStructure.class);
-        adapter = new LevelAdapter(level);
-
         startPositions = new ArrayList<Point>();
         startPositions.add(new Point(0, 0));
         startPositions.add(new Point(1, 0));
         startPositions.add(new Point(6, 6));
         startPositions.add(new Point(3, 3));
 
-        m1 = spy(new Mouse(startPositions.get(0), adapter, 0));
-        m2 = spy(new Mouse(startPositions.get(1), adapter, 1));
-        m3 = spy(new Mouse(startPositions.get(2), adapter, 2));
-        m4 = spy(new Mouse(startPositions.get(3), adapter, 3));
+        m1 = spy(new Mouse(startPositions.get(0), Orientation.NORTH, 0));
+        m2 = spy(new Mouse(startPositions.get(1), Orientation.EAST, 1));
+        m3 = spy(new Mouse(startPositions.get(2), Orientation.SOUTH, 2));
+        m4 = spy(new Mouse(startPositions.get(3), Orientation.WEST, 3));
 
         baitPosition = new Point(0, 0);
-
-        miceStates = new ArrayList<Mouse>();
-        miceStates.add(new Mouse(startPositions.get(0), Orientation.NORTH));
-        miceStates.add(new Mouse(startPositions.get(1), Orientation.EAST));
-        miceStates.add(new Mouse(startPositions.get(2), Orientation.SOUTH));
-        miceStates.add(new Mouse(startPositions.get(3), Orientation.WEST));
 
         mice = new ArrayList<Mouse>();
         mice.add(m1);
@@ -110,7 +96,7 @@ public class MessageTest extends TestCase {
         mice.add(m3);
         mice.add(m4);
 
-        gameStartMsg = spy(new GameStartMessage(tiles, baitPosition, startPositions, miceStates));
+        gameStartMsg = spy(new GameStartMessage(tiles, baitPosition, startPositions, mice));
 
         doors = new ArrayList<Door>();
         doors.add(new Door(startPositions.get(0), true));
@@ -162,7 +148,7 @@ public class MessageTest extends TestCase {
         listeners.add(serverToClientMessageListener);
         m.alertListeners(listeners);
         //Verify
-        verify(serverToClientMessageListener, times(1)).handleGameStart(tiles, baitPosition, startPositions, miceStates);
+        verify(serverToClientMessageListener, times(1)).handleGameStart(tiles, baitPosition, startPositions, mice);
     }
 
     @Test

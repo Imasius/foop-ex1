@@ -13,18 +13,18 @@ import mouse.server.simulation.event.GameLogicEventListener;
  */
 public class Simulator {
 
-    private List<Mouse> mice;
+    private List<SimulationMouse> mice;
     private final ArrayList<GameLogicEventListener> listeners = new ArrayList<GameLogicEventListener>();
 
-    public Simulator(List<Mouse> mice) {
+    public Simulator(List<SimulationMouse> mice) {
         this.mice = mice;
     }
 
     public List<mouse.shared.Mouse> simulate() {
-        Set<Mouse> confusedMice = new HashSet<Mouse>();
+        Set<SimulationMouse> confusedMice = new HashSet<SimulationMouse>();
         List<mouse.shared.Mouse> states = new ArrayList<mouse.shared.Mouse>();
 
-        for (Mouse m1 : mice) {
+        for (SimulationMouse m1 : mice) {
             if (confusedMice.contains(m1)) {
                 states.add(new mouse.shared.Mouse(m1.getPosition(), m1.getLastOrientation()));
                 continue;
@@ -33,7 +33,7 @@ public class Simulator {
             Orientation direction = m1.move();
             Point target = OrientationHelper.getInstance().applyOrientation(m1.getPosition(), direction);
 
-            for (Mouse m2 : mice) {
+            for (SimulationMouse m2 : mice) {
                 if (m1 == m2) {
                     continue;
                 }
@@ -50,7 +50,7 @@ public class Simulator {
             states.add(new mouse.shared.Mouse(m1.getPosition(), direction));
         }
 
-        for (Mouse m : confusedMice) {
+        for (SimulationMouse m : confusedMice) {
             m.confuse();
         }
 

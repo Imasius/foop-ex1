@@ -1,6 +1,6 @@
 package mouse.server.level;
 
-import mouse.shared.Level;
+import mouse.server.simulation.SimulationLevel;
 import mouse.shared.LevelStructure;
 import mouse.shared.Tile;
 
@@ -24,9 +24,9 @@ public class LevelLoader {
      * @return Parsed level.
      * @throws mouse.server.level.LevelException if the file cannot be found or contains illegal characters.
      */
-    public static Level loadLevel(String level) {
+    public static SimulationLevel loadLevel(String level) {
         List<String> levelAsLines = loadLines(level);
-        return new Level(createLevel(levelAsLines));
+        return new SimulationLevel(createLevel(levelAsLines));
     }
 
     private static LevelStructure createLevel(List<String> levelAsLines) {

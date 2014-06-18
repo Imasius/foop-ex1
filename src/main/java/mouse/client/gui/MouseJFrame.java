@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.swing.*;
 
 import mouse.client.network.ServerConnection;
-import mouse.server.simulation.Mouse;
+import mouse.server.simulation.SimulationMouse;
 import mouse.shared.Door;
 import mouse.shared.Mouse;
 import mouse.shared.Tile;
@@ -32,7 +32,7 @@ public class MouseJFrame extends JFrame {
 
     class LocalServerConnectionListener implements ServerToClientMessageListener {
 
-        public void handleUpdateMice(ArrayList<Mouse> mice) {
+        public void handleUpdateMice(ArrayList<SimulationMouse> mice) {
             mcCanvas.repaint();
         }
 

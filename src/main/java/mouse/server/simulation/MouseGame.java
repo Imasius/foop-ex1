@@ -9,35 +9,34 @@ import mouse.server.simulation.event.GameLogicEventListener;
 import mouse.server.simulation.event.OpenDoorEvent;
 import mouse.server.simulation.event.PlayerJoinedEvent;
 import mouse.server.network.ClientConnectionHandler;
-import mouse.shared.Level;
-import mouse.shared.messages.UpdateDoorsMessage;
 import mouse.shared.messages.serverToClient.GameStartMessage;
-import mouse.shared.messages.UpdateMiceMessage;
+import mouse.shared.messages.serverToClient.UpdateDoorsMessage;
+import mouse.shared.messages.serverToClient.UpdateMiceMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MouseGame handles all information of a game and is the eventhandler for
- * GameLogicEvents. This class separates MouseServer which is responsible for
- * the network layer and Simulation which is responsible for the Game Logic
- * itself
+ * SimulationMouseGame handles all information of a game and is the eventhandler
+ * for GameLogicEvents. This class separates SimulationMouseServer which is
+ * responsible for the network layer and Simulation which is responsible for the
+ * Game Logic itself
  *
  * @author kevin_000
  */
 public class MouseGame implements GameLogicEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(MouseGame.class);
-    private final Level level;
+    private final SimulationLevel level;
     private Simulator simulator;/*I understand that EventQueueTask is central but it should not be responsible for logic!*/
 
 
-    public MouseGame(Level level) {
+    public MouseGame(SimulationLevel level) {
         this.level = level;
     }
 
     public void handleOpenDoorEvent(OpenDoorEvent event) {
         /*TODO: Send all door changes as one message not as several this is very inefficient */
-        /*Change the Level*/
+        /*Change the SimulationLevel*/
         level.openDoor(event.doorPosition);
         /*Notify players*/
         Iterator<ClientConnectionHandler> it = clientList.iterator();
@@ -49,7 +48,7 @@ public class MouseGame implements GameLogicEventListener {
 
     public void handleCloseDoorEvent(CloseDoorEvent event) {
         /*TODO: Send all door changes as one message not as several this is very inefficient */
-        /*Change the Level*/
+        /*Change the SimulationLevel*/
         level.closeDoor(event.doorPosition);
         /*Notify players*/
         Iterator<ClientConnectionHandler> it = clientList.iterator();
@@ -97,7 +96,7 @@ public class MouseGame implements GameLogicEventListener {
         while (it.hasNext()) {
             startPosition = it.next();
         }
-        level.addMouse(new Mouse(startPosition, new LevelAdapter(level), level.getMice().size()));
+        level.addMouse(new SimulationMouse(startPosition, new LevelAdapter(level), level.getMice().size()));
         if (level.getMice().size() == serverConfiguration.getPlayerCount()) {
             log.info("Sufficient Players - Game started!");
             simulator = new Simulator(level.getMice());

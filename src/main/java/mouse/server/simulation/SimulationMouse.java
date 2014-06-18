@@ -7,9 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 
 /**
- * Represents a Mouse in the simulation component. User: Markus Date: 02.04.14
+ * Represents a SimulationMouse in the simulation component. User: Markus Date:
+ * 02.04.14
  */
-public class Mouse {
+public class SimulationMouse extends mouse.shared.Mouse {
 
     private Point position;
     private MouseBehaviour state;
@@ -19,9 +20,9 @@ public class Mouse {
     private Orientation lastOrientation = Orientation.NORTH;
     private int playerIndex;
 
-    private static final Logger log = LoggerFactory.getLogger(Mouse.class);
+    private static final Logger log = LoggerFactory.getLogger(SimulationMouse.class);
 
-    public Mouse(Point position, LevelAdapter level, int playerIndex) {
+    public SimulationMouse(Point position, LevelAdapter level, int playerIndex) {
         log.debug("Mouse #{} created at {}.", playerIndex, position);
         state = MouseBehaviour.MOVING_DIRECTED;
         this.position = position;
@@ -88,5 +89,4 @@ public class Mouse {
     public Orientation getLastOrientation() {
         return lastOrientation;
     }
-
 }
