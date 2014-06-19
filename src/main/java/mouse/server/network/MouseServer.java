@@ -9,12 +9,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import mouse.server.network.event.DoorsChangedEvent;
+import mouse.server.network.event.GameOverEvent;
 import mouse.server.network.event.LevelChangedEvent;
 import mouse.server.network.event.MiceChangedEvent;
 import mouse.server.network.event.NotificationEventListener;
+import mouse.server.network.event.PlayerJoinedEvent;
 import mouse.server.simulation.MouseGame;
+import mouse.shared.messages.serverToClient.GameOverMessage;
+import mouse.shared.messages.serverToClient.UpdateDoorsMessage;
+import mouse.shared.messages.serverToClient.UpdateLevelMessage;
+import mouse.shared.messages.serverToClient.UpdateMiceMessage;
 
 /**
  * The server for our mouse game. Use this class inside the client to create a
@@ -52,12 +59,18 @@ public class MouseServer implements NotificationEventListener {
      */
     public boolean start() {
         log.info("Starting mouse game server.");
-        eventQueue.registerGameLogicEventListener(this);
+        eventQueue.addClientToServerMessageListener(game);
+        //EventQueue notifies MouseServer for GameLogicEvents
+        //MouseServer decides if he needs to passes events to game
+        eventQueue.addGameLogicEventListener(game);
+        //If game recieves notifications, it updates everything and possibly
+        //fires an event to the MouseServer who propagates everything 
+        game.addNotificationEventListener(this);
 
         try {
             serverSocket = new ServerSocket(serverConfiguration.getServerPort());
             clientListener = new ClientListener(serverSocket, eventQueue.getQueue());
-            clientListener.registerGameLogicEventListener(this);
+            clientListener.registerPlayerJoinedEventListener(this);
             log.debug("Server is listening on port {}", serverConfiguration.getServerPort());
         } catch (IOException e) {
             log.error("Unable to create server socket.", e);
@@ -87,16 +100,59 @@ public class MouseServer implements NotificationEventListener {
         eventQueue.stop();
     }
 
+    //Send Notifications to player when some structure has changed
     public void handleDoorsChangedEvent(DoorsChangedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //log.debug("Sent :" + event.getDoors().size() + " door updates to:" + clientList.size() + " clients");
+        Iterator<ClientConnectionHandler> it = clientList.iterator();
+        while (it.hasNext()) {
+            it.next().sendMessage(new UpdateDoorsMessage(event.getDoors()));
+        }
     }
 
     public void handleLevelChangedEvent(LevelChangedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log.debug("Send new Level to:" + clientList.size());
+        Iterator<ClientConnectionHandler> it = clientList.iterator();
+        while (it.hasNext()) {
+            it.next().sendMessage(new UpdateLevelMessage(event.getLevel()));
+        }
     }
 
     public void handleMiceChangedEvent(MiceChangedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //log.debug("Sent :" + event.getMice().size() + " mice-updates to:" + clientList.size() + " clients");
+        Iterator<ClientConnectionHandler> it = clientList.iterator();
+        while (it.hasNext()) {
+            it.next().sendMessage(new UpdateMiceMessage(event.getMice()));
+        }
     }
 
+    //GameLogicEvents - Player joins and ticks
+    public void handleTick() {
+        //Server does only pass ticks
+        game.handleTick();
+    }
+
+    public void handlePlayerJoinedEvent(PlayerJoinedEvent event) {
+        if (game.numberOfMice() == serverConfiguration.getPlayerCount()) {
+            log.debug("Game is full");
+        } else if (game.numberOfMice() < serverConfiguration.getPlayerCount()) {
+            log.debug("Player joined the game");
+            clientList.add(event.getClientConnectionHandler());
+            game.addMouse();
+            if (game.numberOfMice() == serverConfiguration.getPlayerCount()) {
+                log.debug("Game is full and ready!");
+                game.start();
+            }
+
+        } else {
+            log.error("More players in the game than allowed");
+        }
+    }
+
+    public void handleGameOverEvent(GameOverEvent event) {
+        log.debug("Sent winner notification: Player " + event.getWinner() + " has won");
+        Iterator<ClientConnectionHandler> it = clientList.iterator();
+        while (it.hasNext()) {
+            it.next().sendMessage(new GameOverMessage(event.getWinner()));
+        }
+    }
 }

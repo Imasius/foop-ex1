@@ -9,25 +9,22 @@ import static org.junit.Assert.assertThat;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OrientationHelperTest extends TestCase {
+public class OrientationHelperTest  {
 
     OrientationHelper helper;
     List<Orientation> results;
 
     @Before
-    @Override
     public void setUp() throws Exception {
         helper = new OrientationHelper();
     }
 
     @After
-    @Override
     public void tearDown() throws Exception {
         helper = null;
         results = null;

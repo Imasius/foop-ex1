@@ -39,7 +39,7 @@ public class Door implements Serializable {
     }
 
     /**
-     * @return if 
+     * @return if
      */
     public boolean isOpen() {
         return !closed;

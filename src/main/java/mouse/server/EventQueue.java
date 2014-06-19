@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import mouse.server.simulation.event.GameLogicEventListener;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
+import mouse.shared.messages.clientToServer.ClientToServerMessageListener;
 
 /**
  * User: Simon Date: 04.06.2014
@@ -33,7 +34,17 @@ public class EventQueue {
         return eventQueueTask.getQueue();
     }
 
-    public void registerGameLogicEventListener(GameLogicEventListener logicEventListener) {
-        this.eventQueueTask.registerGameLogicEventListener(logicEventListener);
+    /**
+     * Pass listener Registration to the timer task
+     */
+    public void addGameLogicEventListener(GameLogicEventListener l) {
+        eventQueueTask.addGameLogicEventListener(l);
+    }
+
+    /**
+     * Pass Listener Registration to the timer task
+     */
+    public void addClientToServerMessageListener(ClientToServerMessageListener l) {
+        eventQueueTask.addClientToServerMessageListener(l);
     }
 }

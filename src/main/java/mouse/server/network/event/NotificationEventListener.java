@@ -1,8 +1,8 @@
 package mouse.server.network.event;
 
 /**
- * Notification events are events which needs to be send from game logic to all
- * players
+ * Notification events are events which needs to be send from server to all
+ * players (=Notification)
  *
  * @author kevin_000
  */
@@ -14,4 +14,9 @@ public interface NotificationEventListener {
     public void handleLevelChangedEvent(LevelChangedEvent event);
 
     public void handleMiceChangedEvent(MiceChangedEvent event);
+
+    public void handleGameOverEvent(GameOverEvent event);
+
+    /*Notify the Game Logic that a player has joined*/
+    public void handlePlayerJoinedEvent(PlayerJoinedEvent event);
 }

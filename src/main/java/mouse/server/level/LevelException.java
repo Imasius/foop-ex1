@@ -1,8 +1,7 @@
 package mouse.server.level;
 
 /**
- * User: Simon
- * Date: 17.06.2014
+ * User: Simon Date: 17.06.2014
  */
 public class LevelException extends RuntimeException {
 

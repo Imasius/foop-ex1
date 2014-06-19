@@ -9,15 +9,8 @@ package mouse.server.simulation.event;
  */
 public interface GameLogicEventListener {
 
-    /*Notify the Game Logic that a door shall open*/
-    public void handleOpenDoorEvent(OpenDoorEvent event);
-
-    /*Notify the Game Logic that a door shall close*/
-    public void handleCloseDoorEvent(CloseDoorEvent event);
-
     /*Notify the Game Logic about one timer tick, such that it can simulate the next step*/
     public void handleTick();
 
-    /*Notify the Game Logic that a player has joined*/
-    public void handlePlayerJoinedEvent(PlayerJoinedEvent event);
+
 }

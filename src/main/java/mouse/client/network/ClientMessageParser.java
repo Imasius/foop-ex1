@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import mouse.shared.messages.MessageParser;
 import mouse.shared.messages.serverToClient.ServerToClientMessage;
-import mouse.shared.messages.serverToClient.ServerToClientMessage;
-import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +26,9 @@ public class ClientMessageParser extends MessageParser {
         listeners.add(listener);
     }
 
-    public void removeListener(ServerToClientMessageListener listener) {
-        listeners.remove(listener);
-    }
-
     @Override
     public void parseMessage(InputStream stream) {
         ServerToClientMessage.fromStream(stream).alertListeners(this.listeners);
+        //log.debug("Received Message and alerted:" + listeners.size());
     }
 }

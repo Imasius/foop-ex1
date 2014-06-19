@@ -13,16 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: Simon
- * Date: 17.06.2014
+ * User: Simon Date: 17.06.2014
  */
 public class LevelLoader {
 
     /**
      * Will load a level for the mouse game from file.
+     *
      * @param level Path to the level which should be loaded.
      * @return Parsed level.
-     * @throws mouse.server.level.LevelException if the file cannot be found or contains illegal characters.
+     * @throws mouse.server.level.LevelException if the file cannot be found or
+     * contains illegal characters.
      */
     public static SimulationLevel loadLevel(String level) {
         List<String> levelAsLines = loadLines(level);
@@ -43,7 +44,7 @@ public class LevelLoader {
     private static void parseLines(FileLevel level, List<String> levelAsLines) {
         int x = 0;
         int y = 0;
-        List<Point> startPositions = new ArrayList<Point>();
+        ArrayList<Point> startPositions = new ArrayList<Point>();
 
         for (String tileLine : levelAsLines) {
             for (char tile : tileLine.toCharArray()) {
@@ -64,12 +65,17 @@ public class LevelLoader {
     }
 
     private static Tile charTileToEnum(char tile) {
-        switch(tile) {
-            case FileLevel.WALL: return Tile.WALL;
-            case FileLevel.EMPTY: return Tile.EMPTY;
-            case FileLevel.DOOR: return Tile.DOOR_OPEN;
-            case FileLevel.START: return Tile.EMPTY;
-            case FileLevel.BAIT: return Tile.EMPTY;
+        switch (tile) {
+            case FileLevel.WALL:
+                return Tile.WALL;
+            case FileLevel.EMPTY:
+                return Tile.EMPTY;
+            case FileLevel.DOOR:
+                return Tile.DOOR_CLOSED;
+            case FileLevel.START:
+                return Tile.EMPTY;
+            case FileLevel.BAIT:
+                return Tile.EMPTY;
             default:
                 throw new LevelException("Illegal character in level description: " + tile);
         }

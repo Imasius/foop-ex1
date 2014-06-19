@@ -9,17 +9,18 @@ import java.io.Serializable;
 public class Mouse implements Serializable {
 
     //A mouse always has a position, either for simulation or for visualization
-    private Point position;
+    protected Point position;
     //A mouse always has a orientation either for simulation or visualization
-    private Orientation orientation;
+    protected Orientation orientation;
     //On both server and client a mouse needs an identifier to share. Mice 
     //can be exchanged as subset of all mice on an update and a mapping back to the
     //original mouse is needed.
-    private int playerIndex;
+    protected int playerIndex;
 
     public Mouse(Point position, Orientation orientation, int playerIndex) {
         this.position = position;
         this.orientation = orientation;
+        this.playerIndex = playerIndex;
     }
 
     public Point getPosition() {

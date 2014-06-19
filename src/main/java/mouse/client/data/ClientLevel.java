@@ -1,62 +1,32 @@
 package mouse.client.data;
 
-import mouse.client.network.ServerConnectionListener;
-import mouse.shared.Orientation;
 import mouse.shared.LevelStructure;
 import mouse.shared.Mouse;
 import mouse.shared.Tile;
-import mouse.shared.messages.serverToClient.GameStartMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import mouse.server.simulation.SimulationMouse;
+import javax.swing.JOptionPane;
 import mouse.shared.Door;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 
 /**
- * Created by Florian on 2014-04-12.
+ * A ClientLevel is a level which contains all information AND encapsulate
+ * everything needed to draw the canvas
+ *
+ * Created by Florian on 2014-04-12. Changed to new shared structure 2014-06-18
+ * by Kevin
  */
-public class ClientLevel implements LevelStructure, ServerToClientMessageListener {
+public class ClientLevel extends LevelStructure implements ServerToClientMessageListener {
 
-    private Tile[][] tiles;
-    private Point baitPosition;
-    private Collection<Point> startPositions;
-    private ArrayList<Mouse> mice;
     private static final Logger log = LoggerFactory.getLogger(ClientLevel.class);
+    //On client side
+    private ArrayList<Mouse> mice;
 
-    public ClientLevel() {
-        startPositions = new ArrayList<Point>();
-        startPositions.add(new Point(2, 2));
-        startPositions.add(new Point(4, 4));
-        startPositions.add(new Point(6, 6));
-        startPositions.add(new Point(8, 8));
-
-        tiles = new Tile[20][20];
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles[i].length; j++) {
-                tiles[i][j] = Tile.EMPTY;
-            }
-        }
-        for (int i = 0; i < 20; i++) {
-            tiles[0][i] = Tile.WALL;
-            tiles[i][0] = Tile.WALL;
-            tiles[19][i] = Tile.WALL;
-            tiles[i][19] = Tile.WALL;
-        }
-
-        tiles[4][4] = Tile.DOOR_CLOSED;
-        tiles[10][4] = Tile.DOOR_OPEN;
-
-        mice = new ArrayList<Mouse>();
-        mice.add(new Mouse(new Point(7, 1), Orientation.EAST));
-        mice.add(new Mouse(new Point(7, 2), Orientation.NORTH));
-        mice.add(new Mouse(new Point(7, 3), Orientation.WEST));
-        mice.add(new Mouse(new Point(7, 4), Orientation.SOUTH));
-
-        baitPosition = new Point(5, 5);
+    public ClientLevel(Tile[][] tiles, Point baitPosition, ArrayList<Point> startPositions) {
+        super(tiles, baitPosition, startPositions);
     }
 
     @Override
@@ -74,78 +44,50 @@ public class ClientLevel implements LevelStructure, ServerToClientMessageListene
         return tiles[x][y];
     }
 
-    @Override
-    public void setTileAt(int x, int y, Tile tile) {
-        tiles[x][y] = tile;
-    }
-
-    @Override
-    public Point getBaitPosition() {
-        return baitPosition;
-    }
-
-    @Override
-    public Collection<Point> getStartPositions() {
-        return startPositions;
-    }
-
-    @Override
-    public GameStartMessage toGameStartMessage() {
-        return new GameStartMessage(tiles, baitPosition, startPositions, mice);
-    }
-
-    public Collection<Mouse> getMice() {
+    public ArrayList<Mouse> getMice() {
         return mice;
     }
 
-    @Override
-    public void onMouseMoved(int mouseIdx, Mouse newState) {
-        if (mice.size() <= mouseIdx) {
-            log.debug("Event for mouse ID:{} reveived, but there are only {} mice", mouseIdx, mice.size());
-        }
-        Mouse st = mice.get(mouseIdx);
-        mice.set(mouseIdx, newState);
-        log.debug("Mouse has moved from:{},{} to {},{}", st.getPosition().x, st.getPosition().y, newState.getPosition().x, newState.getPosition().y);
-    }
-
-    @Override
-    public void onDoorStateChanged(Point doorPosition, boolean isClosed) {
-        tiles[doorPosition.x][doorPosition.y] = isClosed ? Tile.DOOR_CLOSED
-                : Tile.DOOR_OPEN;
-        log.debug("Door state has changed. Door is " + (isClosed ? "closed" : "open"));
-    }
-
-    @Override
-    public void onGameOver() {
-        // handled by MouseJFrame
-    }
-
-    @Override
-    public void onGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
-        this.tiles = tiles;
-        this.baitPosition = baitPosition;
-        this.startPositions = startPositions;
-        this.mice.clear();
-        this.mice.addAll(mice);
-    }
-
     public void handleUpdateMice(ArrayList<Mouse> mice) {
-        for (Mouse m : mice) {
-            mice.set(m., m)
-            m.
+        log.debug("Recieved update for " + mice.size() + " mice");
+        //mice can be a subset
+        if (this.mice == null) {
+            //This is an initial update
+            this.mice = mice;
+        } else {
+            //This is an subsqeuent update
+            for (Mouse m : mice) {
+                this.mice.set(m.getPlayerIndex(), m);
+            }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void handleUpdateDoors(ArrayList<Door> doors) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log.debug("Recieved update for " + doors.size() + " doors");
+        for (Door door : doors) {
+            log.debug("Door was:" + tiles[door.getPosition().x][door.getPosition().y] + " and is now:" + (door.isClosed() ? "closed" : "open"));
+            tiles[door.getPosition().x][door.getPosition().y] = door.isOpen() ? Tile.DOOR_OPEN : Tile.DOOR_CLOSED;
+        }
     }
 
-    public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Override
+    public void handleGameStart() {
+        //At the moment we dont do anything
     }
 
-    public void handleGameOver() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Override
+    public void handleGameOver(int winner) {
+        JOptionPane.showMessageDialog(null, "Player " + winner + " has won. Starting next game!");
+        //ignore, at the moment we dont do anything specific when the game ends, but it could make sense to
+        //change the level or something
     }
+
+    @Override
+    public void handleUpdateLevel(LevelStructure level) {
+        log.debug("Level has changed");
+        this.startPositions = level.getStartPositions();
+        this.baitPosition = level.getBaitPosition();
+        this.tiles = level.getTiles();
+    }
+
 }

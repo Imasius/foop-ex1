@@ -1,56 +1,20 @@
 package mouse.client.gui;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.swing.*;
 
 import mouse.client.network.ServerConnection;
-import mouse.server.simulation.SimulationMouse;
 import mouse.shared.Door;
-import mouse.shared.Mouse;
-import mouse.shared.Tile;
-import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
+import mouse.shared.messages.clientToServer.RequestDoorStateMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Date: 06.04.2014
  *
- * @author Kevin Streicher
+ * @author Kevin Streicher,Florian Schober
  */
-public class MouseJFrame extends JFrame {
-
-    class LocalMouseCanvasListener implements MouseCanvasListener {
-
-        @Override
-        public void onDoorClicked(Point door, boolean isClosed) {
-            connection.requestDoorState(door, !isClosed);
-            log.debug("Clicked on a door @" + door.x + "," + door.y);
-        }
-    }
-
-    class LocalServerConnectionListener implements ServerToClientMessageListener {
-
-        public void handleUpdateMice(ArrayList<SimulationMouse> mice) {
-            mcCanvas.repaint();
-        }
-
-        public void handleUpdateDoors(ArrayList<Door> doors) {
-            mcCanvas.repaint();
-        }
-
-        public void handleGameStart(Tile[][] tiles, Point baitPosition, Collection<Point> startPositions, Collection<Mouse> mice) {
-            mcCanvas.repaint();
-            log.debug("Game started");
-        }
-
-        public void handleGameOver() {
-            log.debug("Game over");
-            mcCanvas.repaint();
-            JOptionPane.showMessageDialog(null, "Game over");
-        }
-    }
+public class MouseJFrame extends JFrame implements MouseCanvasListener {
 
     private static final Logger log = LoggerFactory.getLogger(MouseJFrame.class);
     private final MouseCanvas mcCanvas;
@@ -60,12 +24,11 @@ public class MouseJFrame extends JFrame {
         log.debug("Initialized MouseJFrame");
 
         this.mcCanvas = new MouseCanvas();
-        this.mcCanvas.addListener(new LocalMouseCanvasListener());
+        this.mcCanvas.addMouseCanvasListener(this);
 
         if (connection != null) {
             this.connection = connection;
-            this.connection.addListener(mcCanvas.getLevel());
-            this.connection.addListener(new LocalServerConnectionListener());
+            this.connection.addServerToClientMessageListener(mcCanvas);
             new Thread(this.connection).start();
         } else {
             this.connection = null;
@@ -93,5 +56,10 @@ public class MouseJFrame extends JFrame {
         setSize(xSize, ySize);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
+    }
+
+    public void handleDoorClicked(Door door) {
+        connection.sendMessage(new RequestDoorStateMessage(door));
+        log.debug("Sent request to toggle door:" + door.getPosition().x + "," + door.getPosition().y);
     }
 }

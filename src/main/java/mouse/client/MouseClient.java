@@ -12,14 +12,15 @@ import org.slf4j.LoggerFactory;
  * User: Simon Date: 21.03.14
  */
 public class MouseClient {
+
     private static final Logger log = LoggerFactory.getLogger(MouseClient.class);
-    
+
     public static void main(String[] args) {
         log.debug("Starting up client.");
 
         ClientConfiguration.INSTANCE.parseCommandLine(args);
 
-        BroadcastReceiver receiver = new BroadcastReceiver(ClientConfiguration.INSTANCE);        
+        BroadcastReceiver receiver = new BroadcastReceiver(ClientConfiguration.INSTANCE);
         receiver.addListener(new BroadcastReceiverListener() {
             @Override
             public void onServerFound(ServerInfo info) {
@@ -27,7 +28,5 @@ public class MouseClient {
             }
         });
         new Thread(receiver).start();
-        //SwingUtilities.invokeLater(receiver);
-        //SwingUtilities.invokeLater(new GuiTask(null));
     }
 }

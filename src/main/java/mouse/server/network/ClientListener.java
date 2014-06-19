@@ -1,10 +1,5 @@
 package mouse.server.network;
 
-import mouse.server.simulation.event.GameLogicEventListener;
-import mouse.server.simulation.event.PlayerJoinedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +9,11 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import mouse.server.network.event.NotificationEventListener;
+import mouse.server.network.event.PlayerJoinedEvent;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class will use accept client connections and create appropriate objects
@@ -31,7 +30,7 @@ public class ClientListener extends Thread {
 
     private final ServerSocket serverSocket;
     private final BlockingQueue<ClientToServerMessage> queue;
-    private final ArrayList<GameLogicEventListener> listeners = new ArrayList<GameLogicEventListener>();
+    private final ArrayList<NotificationEventListener> listeners = new ArrayList<NotificationEventListener>();
     private final List<Socket> clientList = new ArrayList<Socket>();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -61,16 +60,17 @@ public class ClientListener extends Thread {
         }
     }
 
-    public void registerGameLogicEventListener(GameLogicEventListener l) {
+    public void registerPlayerJoinedEventListener(NotificationEventListener l) {
         listeners.add(l);
     }
 
     private void firePlayerJoinedEvent(Socket client) {
         //Create a ClientConnectionHandler who is responsible for reading network messages from the client
         ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(client, queue);
+        //Start the clientConnectioNhandler
         executorService.execute(clientConnectionHandler);
 
-        Iterator<GameLogicEventListener> it = listeners.iterator();
+        Iterator<NotificationEventListener> it = listeners.iterator();
         while (it.hasNext()) {
             it.next().handlePlayerJoinedEvent(new PlayerJoinedEvent(clientConnectionHandler));
         }

@@ -1,16 +1,12 @@
 package mouse.server;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import mouse.server.simulation.event.CloseDoorEvent;
 import mouse.server.simulation.event.GameLogicEventListener;
-import mouse.server.simulation.event.OpenDoorEvent;
-import mouse.shared.Door;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import mouse.shared.messages.clientToServer.ClientToServerMessageListener;
 import org.slf4j.Logger;
@@ -19,11 +15,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Simon on 03.06.2014.
  */
-public class EventQueueTask extends TimerTask implements ClientToServerMessageListener {
+public class EventQueueTask extends TimerTask {
 
     private static final Logger log = LoggerFactory.getLogger(EventQueueTask.class);
     private final BlockingQueue<ClientToServerMessage> queue = new LinkedBlockingQueue<ClientToServerMessage>();
-    private final ArrayList<GameLogicEventListener> listeners = new ArrayList<GameLogicEventListener>();
+    private final ArrayList<GameLogicEventListener> gameLogicEventListeners = new ArrayList<GameLogicEventListener>();
+    private final ArrayList<ClientToServerMessageListener> clientToServerMessageListeners = new ArrayList<ClientToServerMessageListener>();
 
     public void run() {
         while (true) {
@@ -31,7 +28,7 @@ public class EventQueueTask extends TimerTask implements ClientToServerMessageLi
             if (message == null) {
                 break;
             }
-            message.alertListeners(Arrays.asList(this));
+            message.alertListeners(clientToServerMessageListeners);
         }
         fireTickEvent();
     }
@@ -45,37 +42,24 @@ public class EventQueueTask extends TimerTask implements ClientToServerMessageLi
      * by the server and provides an interface between the network layer and the
      * logic layer
      */
-    public void registerGameLogicEventListener(GameLogicEventListener l) {
-        listeners.add(l);
+    public void addGameLogicEventListener(GameLogicEventListener l) {
+        gameLogicEventListeners.add(l);
     }
 
-    private void fireOpenDoorEvent(Point doorPosition) {
-        Iterator<GameLogicEventListener> it = listeners.iterator();
-        while (it.hasNext()) {
-            it.next().handleOpenDoorEvent(new OpenDoorEvent(doorPosition));
-        }
-    }
-
-    private void fireCloseDoorEvent(Point doorPosition) {
-        Iterator<GameLogicEventListener> it = listeners.iterator();
-        while (it.hasNext()) {
-            it.next().handleCloseDoorEvent(new CloseDoorEvent(doorPosition));
-        }
+    /**
+     * The ClientToServerMessageListeners handle the events sent from clients
+     *
+     * @param l
+     */
+    public void addClientToServerMessageListener(ClientToServerMessageListener l) {
+        clientToServerMessageListeners.add(l);
     }
 
     private void fireTickEvent() {
-        Iterator<GameLogicEventListener> it = listeners.iterator();
+        Iterator<GameLogicEventListener> it = gameLogicEventListeners.iterator();
         while (it.hasNext()) {
             it.next().handleTick();
         }
-    }
-
-    public void handleOpenDoor(Door door) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void handleCloseDoor(Door door) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

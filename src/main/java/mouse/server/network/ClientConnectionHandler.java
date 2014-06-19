@@ -41,9 +41,9 @@ public class ClientConnectionHandler extends Thread {
         }
 
         while (true) {
-            Message message = Message.fromStream(inputStream);
+            ClientToServerMessage message = ClientToServerMessage.fromStream(inputStream);
             try {
-                queue.put(new MessageWrapper(message, this));
+                queue.put(message);
             } catch (InterruptedException e) {
                 log.warn("Interrupted during put.", e);
             }
@@ -57,6 +57,7 @@ public class ClientConnectionHandler extends Thread {
     public void sendMessage(Message m) {
         try {
             m.writeToStream(socket.getOutputStream());
+            //log.debug("Sent message:" + m.getClass().getName());
         } catch (IOException ex) {
             log.warn("Unable to send message {} to client {}", m.toString(), toString());
         }

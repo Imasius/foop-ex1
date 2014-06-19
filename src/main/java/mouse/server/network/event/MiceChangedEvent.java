@@ -3,6 +3,7 @@ package mouse.server.network.event;
 import java.util.ArrayList;
 import java.util.List;
 import mouse.server.simulation.SimulationMouse;
+import mouse.shared.Mouse;
 
 /**
  * MiceChangedEvent which should be triggered whenever the state any mouse
@@ -13,24 +14,16 @@ import mouse.server.simulation.SimulationMouse;
  */
 public class MiceChangedEvent {
 
-    private List<SimulationMouse> mice;
+    private ArrayList<Mouse> mice;
 
-    public MiceChangedEvent(List<SimulationMouse> mice) {
+    public MiceChangedEvent(ArrayList<Mouse> mice) {
         this.mice = mice;
     }
 
     /**
      * @return the mice
      */
-    public List<SimulationMouse> getMice() {
+    public ArrayList<Mouse> getMice() {
         return mice;
     }
-
-    /**
-     * @param mice the mice to set
-     */
-    public void setMice(List<SimulationMouse> mice) {
-        this.mice = mice;
-    }
-
 }

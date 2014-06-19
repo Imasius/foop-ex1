@@ -5,69 +5,57 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import mouse.shared.Mouse;
 
 /**
+ * Changed from simple Mouse/MouseState to SimulationMouse. A SimulationMouse
+ * extends the shareable data structure of Mouse with Behaviour.
+ *
  * Represents a SimulationMouse in the simulation component. User: Markus Date:
  * 02.04.14
  */
-public class SimulationMouse extends mouse.shared.Mouse {
-
-    private Point position;
-    private MouseBehaviour state;
-    private LevelAdapter levelAdapter;
-    private int randomCounter;
-    private Orientation randomDirection;
-    private Orientation lastOrientation = Orientation.NORTH;
-    private int playerIndex;
+public class SimulationMouse extends Mouse {
 
     private static final Logger log = LoggerFactory.getLogger(SimulationMouse.class);
 
-    public SimulationMouse(Point position, LevelAdapter level, int playerIndex) {
-        log.debug("Mouse #{} created at {}.", playerIndex, position);
+    private MouseBehaviour state;
+    private int randomCounter;
+
+    public SimulationMouse(Point position, Orientation orientation, int playerIndex) {
+        super(position, orientation, playerIndex);
+        log.debug("Mouse #{} created at {} and looks towards {}.", playerIndex, position, orientation);
         state = MouseBehaviour.MOVING_DIRECTED;
-        this.position = position;
-        this.levelAdapter = level;
-        this.playerIndex = playerIndex;
     }
 
-    public Orientation move() {
-        Point bait = levelAdapter.getLevelStructure().getBaitPosition();
-        Orientation ret = null;
-        switch (state) {
-            case MOVING_DIRECTED:
-                for (Orientation o : OrientationHelper.getInstance().getViableOrientations(position, bait)) {
-                    if (levelAdapter.isDirectionFeasible(position, o)) {
-                        ret = o;
-                        break;
-                    }
-                }
+    public boolean isConfused() {
+        return randomCounter > 0;
+    }
 
-                confuse();
-                ret = randomDirection;
-                break;
-            case MOVING_RANDOM:
-                if (!levelAdapter.isDirectionFeasible(position, randomDirection)) {
-                    randomDirection = levelAdapter.getRandomFeasibleDirection(position);
-                }
-                ret = randomDirection;
-                randomCounter--;
+    public boolean isSniffing() {
+        return randomCounter > 2;
+    }
 
-                if (randomCounter <= 0) {
-                    state = MouseBehaviour.MOVING_DIRECTED;
-                }
-                break;
+    /**
+     * While i mouse is confused it will only sniff
+     */
+    public void sniff() {
+        randomCounter = Math.max(randomCounter - 1, 0);
+        if (randomCounter == 0) {
+            //Done sniffing
+            state = MouseBehaviour.MOVING_DIRECTED;
         }
-
-        lastOrientation = ret;
-        return ret;
     }
 
-    public void applyMotion(Orientation direction) {
-        position = OrientationHelper.getInstance().applyOrientation(position, direction);
+    public void move() {
+        applyMotion(getOrientation());
     }
 
-    public Point getPosition() {
-        return position;
+    private void applyMotion(Orientation direction) {
+        position = OrientationHelper.getInstance().applyMotion(position, direction);
+    }
+
+    public MouseBehaviour getBehaviour() {
+        return state;
     }
 
     /**
@@ -82,11 +70,16 @@ public class SimulationMouse extends mouse.shared.Mouse {
 
     public void confuse() {
         state = MouseBehaviour.MOVING_RANDOM;
-        randomDirection = levelAdapter.getRandomFeasibleDirection(position);
-        randomCounter = 4;
+        int rand = 1 + (int) (Math.random() * 2);
+        randomCounter = rand;
     }
 
-    public Orientation getLastOrientation() {
-        return lastOrientation;
+    public void setPosition(Point position) {
+        this.position = position;
     }
+
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
 }

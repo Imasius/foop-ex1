@@ -5,7 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import mouse.server.simulation.SimulationLevel;
 import mouse.shared.Door;
 import mouse.shared.LevelStructure;
 import mouse.shared.Mouse;
@@ -19,11 +21,10 @@ import mouse.shared.messages.serverToClient.GameStartMessage;
 import mouse.shared.messages.serverToClient.ServerToClientMessage;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 import mouse.shared.messages.serverToClient.UpdateDoorsMessage;
+import mouse.shared.messages.serverToClient.UpdateLevelMessage;
 import mouse.shared.messages.serverToClient.UpdateMiceMessage;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,13 +33,14 @@ import static org.mockito.Mockito.verify;
  * Created by Florian on 2014-04-12. Reworked for ServerClientStructure by Kevin
  * 1.06.2014
  */
-public class MessageTest extends TestCase {
+public class MessageTest {
 
     //ClientToServer
     private RequestDoorStateMessage requestDoorStateMsg;
     //ServerToClient
     private GameStartMessage gameStartMsg;
     private GameOverMessage gameOverMsg;
+    private UpdateLevelMessage updateLevelMsg;
     private UpdateMiceMessage updateMiceMsg;
     private UpdateDoorsMessage updateDoorsMsg;
 
@@ -53,23 +55,23 @@ public class MessageTest extends TestCase {
 
     private ArrayList<Mouse> mice;
     private ArrayList<Door> doors;
-    private List<Point> startPositions;
+    private ArrayList<Point> startPositions;
     private Tile[][] tiles;
 
-    @Mock
     private ClientToServerMessageListener clientToServerMessageListener;
-    @Mock
     private ServerToClientMessageListener serverToClientMessageListener;
 
+    LevelStructure level;
+
     @Before
-    @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         //ClientToServerMessages
         door = spy(new Door(new Point(1, 1), true));
-        requestDoorStateMsg = spy(new RequestDoorStateMessage(door));
+        requestDoorStateMsg = new RequestDoorStateMessage(door);
 
         //ServerToClientMessages
-        gameOverMsg = spy(new GameOverMessage());
+        gameOverMsg = new GameOverMessage(1);
+        gameStartMsg = new GameStartMessage();
 
         tiles = new Tile[2][2];
         tiles[0][0] = Tile.EMPTY;
@@ -77,16 +79,18 @@ public class MessageTest extends TestCase {
         tiles[1][0] = Tile.WALL;
         tiles[1][1] = Tile.DOOR_CLOSED;
 
+        baitPosition = new Point(1, 0);
+
         startPositions = new ArrayList<Point>();
         startPositions.add(new Point(0, 0));
         startPositions.add(new Point(1, 0));
         startPositions.add(new Point(6, 6));
         startPositions.add(new Point(3, 3));
 
-        m1 = spy(new Mouse(startPositions.get(0), Orientation.NORTH, 0));
-        m2 = spy(new Mouse(startPositions.get(1), Orientation.EAST, 1));
-        m3 = spy(new Mouse(startPositions.get(2), Orientation.SOUTH, 2));
-        m4 = spy(new Mouse(startPositions.get(3), Orientation.WEST, 3));
+        m1 = new Mouse(startPositions.get(0), Orientation.NORTH, 0);
+        m2 = new Mouse(startPositions.get(1), Orientation.EAST, 1);
+        m3 = new Mouse(startPositions.get(2), Orientation.SOUTH, 2);
+        m4 = new Mouse(startPositions.get(3), Orientation.WEST, 3);
 
         baitPosition = new Point(0, 0);
 
@@ -96,18 +100,60 @@ public class MessageTest extends TestCase {
         mice.add(m3);
         mice.add(m4);
 
-        gameStartMsg = spy(new GameStartMessage(tiles, baitPosition, startPositions, mice));
+        updateMiceMsg = new UpdateMiceMessage(mice);
+
+        //The application uses FileLevel, but we just the abstract super class
+        level = new SimulationLevel(new LevelStructure(tiles, baitPosition, startPositions) {
+        });
+
+        updateLevelMsg = new UpdateLevelMessage(level);
 
         doors = new ArrayList<Door>();
         doors.add(new Door(startPositions.get(0), true));
         doors.add(new Door(startPositions.get(1), false));
-        updateDoorsMsg = spy(new UpdateDoorsMessage(doors));
+        updateDoorsMsg = new UpdateDoorsMessage(doors);
 
+        serverToClientMessageListener = spy(new ServerToClientMessageListener() {
+
+            public void handleUpdateMice(ArrayList<Mouse> mice) {
+                //do nothing
+            }
+
+            public void handleUpdateDoors(ArrayList<Door> doors) {
+                //do nothing
+            }
+
+            public void handleUpdateLevel(LevelStructure level) {
+                //do nothing
+            }
+
+            public void handleGameStart() {
+                //do nothing
+            }
+
+            public void handleGameOver() {
+                //do nothing
+            }
+
+            public void handleGameOver(int winner) {
+                //do nothing
+            }
+        });
+        clientToServerMessageListener = spy(new ClientToServerMessageListener() {
+
+            public void handleOpenDoor(Door door) {
+                //do nothing
+            }
+
+            public void handleCloseDoor(Door door) {
+                //do nothing
+            }
+        });
     }
 
     //Test ClientToServer Messages
     @Test
-    private void testRequestDoorMessage() {
+    public void testRequestDoorMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         requestDoorStateMsg.writeToStream(out);
@@ -119,11 +165,11 @@ public class MessageTest extends TestCase {
         listeners.add(clientToServerMessageListener);
         m.alertListeners(listeners);
         //Verify
-        verify(clientToServerMessageListener, times(1)).handleCloseDoor(door);
+        verify(clientToServerMessageListener, times(1)).handleCloseDoor(((RequestDoorStateMessage) m).getDoor());
     }
 
     @Test
-    private void testRequestDoorMessageIntegrity() {
+    public void testRequestDoorMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         requestDoorStateMsg.writeToStream(out);
@@ -131,12 +177,14 @@ public class MessageTest extends TestCase {
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         RequestDoorStateMessage m = (RequestDoorStateMessage) ClientToServerMessage.fromStream(in);
         //CheckIntegrity
-        assertEquals(door, m.getDoor());
+        assertEquals(door.getPosition().x, m.getDoor().getPosition().x);
+        assertEquals(door.getPosition().y, m.getDoor().getPosition().y);
+        assertEquals(door.isClosed(), m.getDoor().isClosed());
     }
 
     //Test SeverToClient Messages
     @Test
-    private void testGameStartMessage() {
+    public void testGameStartMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         gameStartMsg.writeToStream(out);
@@ -148,31 +196,23 @@ public class MessageTest extends TestCase {
         listeners.add(serverToClientMessageListener);
         m.alertListeners(listeners);
         //Verify
-        verify(serverToClientMessageListener, times(1)).handleGameStart(tiles, baitPosition, startPositions, mice);
+        verify(serverToClientMessageListener, times(1)).handleGameStart();
     }
 
     @Test
-    private void testGameStartMessageIntegrity() {
+    public void testGameStartMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         gameStartMsg.writeToStream(out);
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         GameStartMessage m = (GameStartMessage) ServerToClientMessage.fromStream(in);
-        //CheckIntegrity
-        assertEquals(baitPosition, m.getBaitPosition());
-        assertEquals(mice.size(), m.getMice().size());
-        assertTrue(mice.containsAll(m.getMice()));
-        assertEquals(tiles[0][0], m.getTiles()[0][0]);
-        assertEquals(tiles[0][1], m.getTiles()[0][1]);
-        assertEquals(tiles[1][0], m.getTiles()[1][0]);
-        assertEquals(tiles[1][1], m.getTiles()[1][1]);
-        assertEquals(startPositions.size(), m.getStartPositions().size());
-        assertTrue(startPositions.containsAll(m.getStartPositions()));
+        //CheckIntegrity        
+        //No Data inside, but should be castable
     }
 
     @Test
-    private void testGameOverMessage() {
+    public void testGameOverMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         gameOverMsg.writeToStream(out);
@@ -184,11 +224,11 @@ public class MessageTest extends TestCase {
         listeners.add(serverToClientMessageListener);
         m.alertListeners(listeners);
         //Verify
-        verify(serverToClientMessageListener, times(1)).handleGameOver();
+        verify(serverToClientMessageListener, times(1)).handleGameOver(1);
     }
 
     @Test
-    private void testGameOverMessageIntegrity() {
+    public void testGameOverMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         gameOverMsg.writeToStream(out);
@@ -200,7 +240,7 @@ public class MessageTest extends TestCase {
     }
 
     @Test
-    private void testUpdateMiceMessage() {
+    public void testUpdateMiceMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         updateMiceMsg.writeToStream(out);
@@ -212,11 +252,13 @@ public class MessageTest extends TestCase {
         listeners.add(serverToClientMessageListener);
         m.alertListeners(listeners);
         //Verify
-        verify(serverToClientMessageListener, times(1)).handleUpdateMice(mice);
+        UpdateMiceMessage mm = (UpdateMiceMessage) m;
+        ArrayList<Mouse> miceList = mm.getMice();
+        verify(serverToClientMessageListener, times(1)).handleUpdateMice(miceList);
     }
 
     @Test
-    private void testUpdateMiceMessageIntegrity() {
+    public void testUpdateMiceMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         updateMiceMsg.writeToStream(out);
@@ -229,7 +271,7 @@ public class MessageTest extends TestCase {
     }
 
     @Test
-    private void testUpdateDoorsMessage() {
+    public void testUpdateDoorsMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         updateDoorsMsg.writeToStream(out);
@@ -245,7 +287,7 @@ public class MessageTest extends TestCase {
     }
 
     @Test
-    private void testUpdateDoorsMessageIntegrity() {
+    public void testUpdateDoorsMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         updateDoorsMsg.writeToStream(out);
@@ -257,4 +299,44 @@ public class MessageTest extends TestCase {
         assertTrue(doors.containsAll(m.getDoors()));
     }
 
+    @Test
+    public void testUpdateLevelMessage() {
+        //Write Message
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        updateLevelMsg.writeToStream(out);
+        //Read Message
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        //HandleMessage
+        List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
+        listeners.add(serverToClientMessageListener);
+        m.alertListeners(listeners);
+        //Verify
+        verify(serverToClientMessageListener, times(1)).handleUpdateLevel(((UpdateLevelMessage) m).getLevel());
+    }
+
+    @Test
+    public void testUpdateLevelIntegrityMessage() {
+        //Write Message
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        updateLevelMsg.writeToStream(out);
+        //Read Message
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        UpdateLevelMessage m = (UpdateLevelMessage) ServerToClientMessage.fromStream(in);
+        //HandleMessage
+        List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
+        listeners.add(serverToClientMessageListener);
+        m.alertListeners(listeners);
+        //Verify Integrity
+        LevelStructure l = m.getLevel();
+        assertEquals(baitPosition.x, l.getBaitPosition().x);
+        assertEquals(baitPosition.y, l.getBaitPosition().y);
+        assertEquals(tiles[0][0], l.getTiles()[0][0]);
+        assertEquals(tiles[0][1], l.getTiles()[0][1]);
+        assertEquals(tiles[1][0], l.getTiles()[1][0]);
+        assertEquals(tiles[1][1], l.getTiles()[1][1]);
+        assertEquals(startPositions.size(), l.getStartPositions().size());
+        assertTrue(startPositions.containsAll(l.getStartPositions()));
+
+    }
 }

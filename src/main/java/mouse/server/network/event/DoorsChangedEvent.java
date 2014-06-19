@@ -1,6 +1,6 @@
 package mouse.server.network.event;
 
-import java.awt.Point;
+import java.util.ArrayList;
 import mouse.shared.Door;
 
 /**
@@ -13,24 +13,16 @@ import mouse.shared.Door;
  */
 public class DoorsChangedEvent {
 
-    private Door door;
+    private ArrayList<Door> doors;
 
-    public DoorsChangedEvent(Door door) {
-        this.door = door;
+    public DoorsChangedEvent(ArrayList<Door> doors) {
+        this.doors = doors;
     }
 
     /**
      * @return the door
      */
-    public Door getDoor() {
-        return door;
+    public ArrayList<Door> getDoors() {
+        return doors;
     }
-
-    /**
-     * @param door the door to set
-     */
-    public void setDoor(Door door) {
-        this.door = door;
-    }
-
 }

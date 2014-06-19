@@ -27,10 +27,10 @@ public abstract class ClientToServerMessage extends Message {
             in = new ObjectInputStream(stream);
             msg = (ClientToServerMessage) in.readObject();
         } catch (IOException ex) {
-            log.error("Unable to deserialize message.", ex);
+            log.error("Unable to deserialize message:", ex);
             System.exit(1);
         } catch (ClassNotFoundException ex) {
-            log.error("Unable to deserialize message.", ex);
+            log.error("Unable to deserialize message:", ex);
             System.exit(1);
         }
         return msg;

@@ -1,21 +1,14 @@
 package mouse.server.level;
 
-import mouse.server.simulation.SimulationMouse;
-import mouse.shared.LevelStructure;
-import mouse.shared.Mouse;
-import mouse.shared.Tile;
-import mouse.shared.messages.serverToClient.GameStartMessage;
-
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import mouse.shared.LevelStructure;
+import mouse.shared.Tile;
 
 /**
- * User: Simon
- * Date: 16.06.2014
+ * User: Simon Date: 16.06.2014
  */
-public class FileLevel implements LevelStructure {
+public class FileLevel extends LevelStructure {
 
     public static final char WALL = 'X';
     public static final char EMPTY = ' ';
@@ -26,11 +19,12 @@ public class FileLevel implements LevelStructure {
     private int height;
     private int width;
 
-    private Tile[][] tiles;
+    public FileLevel() {
+    }
 
-    private List<Point> startPositions = new ArrayList<Point>();
-    private Point baitPosition;
-    private List<SimulationMouse> mice = new ArrayList<SimulationMouse>();
+    public FileLevel(Tile[][] tiles, Point baitPosition, ArrayList<Point> startPositions) {
+        super(tiles, baitPosition, startPositions);
+    }
 
     @Override
     public int getHeight() {
@@ -56,21 +50,6 @@ public class FileLevel implements LevelStructure {
         return baitPosition;
     }
 
-    @Override
-    public Collection<Point> getStartPositions() {
-        return startPositions;
-    }
-
-    @Override
-    public GameStartMessage toGameStartMessage() {
-        ArrayList<SimulationMouse> states = new ArrayList<SimulationMouse>();
-        for (SimulationMouse m : mice) {
-            states.add(new SimulationMouse(m.getPosition(), m.getLastOrientation()));
-        }
-
-        return new GameStartMessage(tiles, baitPosition, startPositions, states);
-    }
-
     public void setHeight(int height) {
         this.height = height;
     }
@@ -83,7 +62,7 @@ public class FileLevel implements LevelStructure {
         this.tiles = tiles;
     }
 
-    public void setStartPositions(List<Point> startPositions) {
+    public void setStartPositions(ArrayList<Point> startPositions) {
         this.startPositions = startPositions;
     }
 

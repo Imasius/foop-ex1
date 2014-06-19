@@ -9,7 +9,7 @@ import java.io.*;
  * The Message class is only responsible for serialization and deserialization
  * Created by Florian on 2014-04-12. Adapted by Kevein 2014-06-17
  */
-public abstract class Message {
+public abstract class Message implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(Message.class);
 
@@ -21,7 +21,7 @@ public abstract class Message {
             out.writeObject(this);
             out.flush();
         } catch (IOException ex) {
-            log.error("Unable to serialize message.", ex);
+            log.error("Unable to serialize message:" + this.getClass().getName(), ex);
             System.exit(1);
         }
     }

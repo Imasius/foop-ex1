@@ -1,43 +1,54 @@
 package mouse.server.simulation;
 
-import mouse.shared.Orientation;
 import java.awt.*;
+import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import mouse.shared.LevelStructure;
+import mouse.shared.Orientation;
 import mouse.shared.Tile;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
  *
- * @author Markus Scherer, 8.4
+ * @author Markus Scherer, 8.4 adapted to new Level Test
  */
-public class LevelAdapterTest extends TestCase {
+public class SimulationLevelTest {
 
-    private LevelStructure levelStructure = null;
-    private LevelAdapter adapter = null;
+    private SimulationLevel level;
     private Point position = null;
+    private Tile[][] tiles;
 
     @Before
     public void setUp() throws Exception {
-        levelStructure = mock(LevelStructure.class);
-        adapter = new LevelAdapter(levelStructure);
         position = new Point(1, 1);
-    }
 
-    @After
-    public void tearDown() throws Exception {
+        tiles = new Tile[2][2];
+        tiles[0][0] = Tile.EMPTY;
+        tiles[0][1] = Tile.DOOR_OPEN;
+        tiles[1][0] = Tile.WALL;
+        tiles[1][1] = Tile.DOOR_CLOSED;
+        ArrayList<Point> startPositions = new ArrayList<Point>();
+        startPositions.add(position);
+        level = spy(new SimulationLevel(new LevelStructure(tiles, position, startPositions) {
+
+        }));
+
+        when(level.getHeight()).thenReturn(3);
+        when(level.getWidth()).thenReturn(3);
     }
 
     private void testHelper(int xDiff, int yDiff, Tile tileType, Orientation direction, boolean expected) {
-        when(levelStructure.tileAt(position.x + xDiff, position.y + yDiff)).thenReturn(tileType);
-        when(levelStructure.getHeight()).thenReturn(3);
-        when(levelStructure.getWidth()).thenReturn(3);
-        boolean result = adapter.isDirectionFeasible(position, direction);
+        Point examine = position;
+        examine.x += xDiff;
+        examine.y += yDiff;
+
+        when(level.tileAt(examine.x, examine.y)).thenReturn(tileType);
+        boolean result = level.isDirectionFeasible(position, direction);
 
         if (expected) {
             assertTrue(tileType + " should be feasible!", result);
@@ -123,21 +134,23 @@ public class LevelAdapterTest extends TestCase {
 
     @Test
     public void emptyTilesWestAreFeasible() {
+
+        when(level.isDirectionFeasible(new Point(0, 1), Orientation.WEST)).thenReturn(true);
         testHelper(-1, 0, Tile.EMPTY, Orientation.WEST, true);
     }
 
     @Test
     public void widthOutsideRangeIsInfeasible() {
-        when(levelStructure.getWidth()).thenReturn(2);
-        boolean result = adapter.isDirectionFeasible(position, Orientation.EAST);
+        when(level.getWidth()).thenReturn(2);
+        boolean result = level.isDirectionFeasible(position, Orientation.EAST);
 
         assertFalse("Values outside range should be infeasible!", result);
     }
 
     @Test
     public void heightOutsideRangeIsInfeasible() {
-        when(levelStructure.getWidth()).thenReturn(2);
-        boolean result = adapter.isDirectionFeasible(position, Orientation.SOUTH);
+        when(level.getWidth()).thenReturn(2);
+        boolean result = level.isDirectionFeasible(position, Orientation.SOUTH);
 
         assertFalse("Values outside range should be infeasible!", result);
     }
@@ -145,7 +158,7 @@ public class LevelAdapterTest extends TestCase {
     @Test
     public void xNegativeIsInfeasible() {
         position.x = 0;
-        boolean result = adapter.isDirectionFeasible(position, Orientation.EAST);
+        boolean result = level.isDirectionFeasible(position, Orientation.EAST);
 
         assertFalse("Values outside range should be infeasible!", result);
     }
@@ -153,7 +166,7 @@ public class LevelAdapterTest extends TestCase {
     @Test
     public void yNegativeIsInfeasible() {
         position.y = 0;
-        boolean result = adapter.isDirectionFeasible(position, Orientation.NORTH);
+        boolean result = level.isDirectionFeasible(position, Orientation.NORTH);
 
         assertFalse("Values outside range should be infeasible!", result);
     }

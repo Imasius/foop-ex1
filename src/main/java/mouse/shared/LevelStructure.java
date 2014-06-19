@@ -9,31 +9,48 @@ import java.util.ArrayList;
  * (0,0) in the upper-left corner and range to (width-1, height-1). User: Markus
  * Date: 02.04.14
  *
- * Added Collection<Pair<Point, Orientation>> getMousePosition() user: Kevin
- * Date: 06.04.14
+ * Updated to better ensure information for both server and client is defined in
+ * this class
+ *
  */
 public abstract class LevelStructure implements Serializable {
 
-    private Tile[][] tiles;
-    private Point baitPosition;
+    protected Tile[][] tiles;
+    protected Point baitPosition;
     //ArrayList is serializeable!
-    private ArrayList<Point> startPosition;
+    protected ArrayList<Point> startPositions;
 
-    public LevelStructure(Tile[][] tiles) {
-        this.tiles = tiles;
+    public LevelStructure() {
+
     }
 
-    abstract int getHeight();
+    public LevelStructure(Tile[][] tiles, Point baitPosition, ArrayList<Point> startPosition) {
+        this.tiles = tiles;
+        this.baitPosition = baitPosition;
+        this.startPositions = startPosition;
+    }
 
-    public abstract int getWidth();
+    public Tile[][] getTiles() {
+        return tiles;
+    }
 
-    public abstract Tile tileAt(int x, int y);
+    public int getHeight() {
+        return tiles[0].length;
+    }
+
+    public int getWidth() {
+        return tiles.length;
+    }
+
+    public Tile tileAt(int x, int y) {
+        return tiles[x][y];
+    }
 
     public Point getBaitPosition() {
         return baitPosition;
     }
 
     public ArrayList<Point> getStartPositions() {
-        return startPosition;
+        return startPositions;
     }
 }

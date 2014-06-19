@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import mouse.shared.messages.Message;
-import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

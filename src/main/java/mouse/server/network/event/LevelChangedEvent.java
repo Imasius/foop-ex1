@@ -1,6 +1,7 @@
 package mouse.server.network.event;
 
 import mouse.server.simulation.SimulationLevel;
+import mouse.shared.LevelStructure;
 
 /**
  * An event which should be triggered whenever the level has changed. Listeners
@@ -21,8 +22,8 @@ public class LevelChangedEvent {
     /**
      * @return the level
      */
-    public SimulationLevel getLevel() {
-        return level;
+    public LevelStructure getLevel() {
+        return (LevelStructure) level;
     }
 
 }
