@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import mouse.server.network.event.DoorsChangedEvent;
 import mouse.server.network.event.GameOverEvent;
 import mouse.server.network.event.LevelChangedEvent;
@@ -33,24 +34,24 @@ import mouse.shared.messages.serverToClient.UpdateMiceMessage;
  * User: Simon Date: 21.03.14
  */
 public class MouseServer implements NotificationEventListener {
-    
+
     private static final Logger log = LoggerFactory.getLogger(MouseServer.class);
-    
+
     private ServerSocket serverSocket;
     private final Broadcaster broadcaster;
     private final ServerConfiguration serverConfiguration;
     private final EventQueue eventQueue;
-    
+
     private ClientListener clientListener;
     private final List<ClientConnectionHandler> clientList;
-    
+
     private MouseGame game;
-    
+
     public MouseServer() {
         serverConfiguration = ServerConfiguration.load();
         broadcaster = new Broadcaster(serverConfiguration);
         eventQueue = new EventQueue(serverConfiguration.getTickInterval());
-        clientList = new ArrayList<ClientConnectionHandler>();
+        clientList = new CopyOnWriteArrayList<ClientConnectionHandler>();
 
         //The game running on a server
         game = new MouseGame(LevelLoader.loadLevel(serverConfiguration.getLevel()));
@@ -68,7 +69,7 @@ public class MouseServer implements NotificationEventListener {
         //If game recieves notifications, it updates everything and possibly
         //fires an event to the MouseServer who propagates everything 
         game.addNotificationEventListener(this);
-        
+
         try {
             serverSocket = new ServerSocket(serverConfiguration.getServerPort());
             clientListener = new ClientListener(serverSocket, eventQueue.getQueue());
@@ -79,15 +80,15 @@ public class MouseServer implements NotificationEventListener {
             return false;
         }
         clientListener.start();
-        
+
         if (serverConfiguration.isBroadcastEnabled()) {
             broadcaster.start();
         }
-        
+
         eventQueue.start();
         return true;
     }
-    
+
     public void stop() {
         log.info("Shutting down server.");
         try {
@@ -95,7 +96,7 @@ public class MouseServer implements NotificationEventListener {
         } catch (IOException ex) {
             log.warn("Exception while closing the ServerSocket.", ex);
         }
-        
+
         if (serverConfiguration.isBroadcastEnabled()) {
             broadcaster.stop();
         }
@@ -112,7 +113,7 @@ public class MouseServer implements NotificationEventListener {
             }
         }
     }
-    
+
     public void handleLevelChangedEvent(LevelChangedEvent event) {
         log.debug("Send new Level to:" + clientList.size());
         synchronized (clientList) {
@@ -122,7 +123,7 @@ public class MouseServer implements NotificationEventListener {
             }
         }
     }
-    
+
     public void handleMiceChangedEvent(MiceChangedEvent event) {
 //        log.debug("Sent :" + event.getMice().size() + " mice-updates to:" + clientList.size() + " clients");        
 //        for (Mouse m : event.getMice()) {
@@ -134,7 +135,7 @@ public class MouseServer implements NotificationEventListener {
                 it.next().sendMessage(new UpdateMiceMessage(event.getMice()));
             }
         }
-        
+
     }
 
     //GameLogicEvents - Player joins and ticks
@@ -142,7 +143,7 @@ public class MouseServer implements NotificationEventListener {
         //Server does only pass ticks
         game.handleTick();
     }
-    
+
     public void handlePlayerJoinedEvent(PlayerJoinedEvent event) {
         if (clientList.size() == serverConfiguration.getPlayerCount()) {
             log.debug("Game is full");
@@ -157,17 +158,17 @@ public class MouseServer implements NotificationEventListener {
             if (game.numberOfMice() < clientList.size()) {
                 game.addMouse();
             }
-            
+
             if (game.numberOfMice() == serverConfiguration.getPlayerCount()) {
                 log.debug("Game is full and ready!");
                 game.start();
             }
-            
+
         } else {
             log.error("More players in the game than allowed");
         }
     }
-    
+
     public void handleGameOverEvent(GameOverEvent event) {
         log.debug("Sent winner notification: Player " + event.getWinner() + " has won");
         synchronized (clientList) {
@@ -177,7 +178,7 @@ public class MouseServer implements NotificationEventListener {
             }
         }
     }
-    
+
     public void handlePlayerLeftEvent(PlayerLeftEvent event) {
         synchronized (clientList) {
             clientList.remove(event.getClientConnectionHandler());
