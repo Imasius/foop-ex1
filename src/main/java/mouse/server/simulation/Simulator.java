@@ -30,15 +30,17 @@ public class Simulator {
         ArrayList<Mouse> movedMice = new ArrayList<Mouse>();
 
         for (SimulationMouse mouse : mice) {
+            Point before = mouse.getPosition();
             if (mouse.isConfused()) {
                 mouse.sniff();
                 if (mouse.isSniffing()) {
                     //if the timer is to high we wont move, but else we will choose a random direciton
+                    log.debug("Mouse is confused and wont move");
                     continue;
                 }
 
             }
-            if(mouse.getBehaviour() == MouseBehaviour.MOVING_DIRECTED){
+            if (mouse.getBehaviour() == MouseBehaviour.MOVING_DIRECTED) {
                 mouse.setOrientation(getNewDirection(mouse, level));
             }
             //On each update get a new direction
@@ -70,6 +72,7 @@ public class Simulator {
                 movedMice.add(mouse);
             }
 
+            //log.debug("Mouse " + mouse.getPlayerIndex() + " moved from:" + before.x + "," + before.y + "->" + mouse.getPosition().x + "," + mouse.getPosition().y);
         }
 
         return movedMice;

@@ -1,6 +1,7 @@
 package mouse.client.network;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import mouse.shared.messages.MessageParser;
@@ -27,8 +28,13 @@ public class ClientMessageParser extends MessageParser {
     }
 
     @Override
-    public void parseMessage(InputStream stream) {
+    public void parseMessage(ObjectInputStream stream) throws IOException {
+        if (stream == null) {
+            log.error("Unable to parseMessage, stream was null");
+            throw new IOException("Unable to parseMessage, stream was null");
+        }
         ServerToClientMessage.fromStream(stream).alertListeners(this.listeners);
         //log.debug("Received Message and alerted:" + listeners.size());
     }
+
 }

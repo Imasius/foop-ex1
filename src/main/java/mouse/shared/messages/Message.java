@@ -13,16 +13,21 @@ public abstract class Message implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(Message.class);
 
-    public void writeToStream(OutputStream stream) {
+    public void writeToStream(ObjectOutputStream stream) throws IOException {
+        if (stream == null) {
+            log.error("ObjectOutputStream was null. No message send:" + this.getClass().getName());
+            throw new IOException("ObjectOutputStream was null. No message send:" + this.getClass().getName());
+        }
         ObjectOutput out = null;
         byte[] data = null;
         try {
-            out = new ObjectOutputStream(stream);
+            out = stream;
             out.writeObject(this);
             out.flush();
+            stream.reset();
         } catch (IOException ex) {
-            log.error("Unable to serialize message:" + this.getClass().getName(), ex);
-            System.exit(1);
+            log.error("Unable to serialize message:" + this.getClass().getName() + " skip write", ex);
+            throw new IOException("Unable to serialize message:" + this.getClass().getName() + " skip write");
         }
     }
 }

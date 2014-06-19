@@ -19,4 +19,7 @@ public interface NotificationEventListener {
 
     /*Notify the Game Logic that a player has joined*/
     public void handlePlayerJoinedEvent(PlayerJoinedEvent event);
+
+    /*Notify the Server a client has left*/
+    public void handlePlayerLeftEvent(PlayerLeftEvent event);
 }

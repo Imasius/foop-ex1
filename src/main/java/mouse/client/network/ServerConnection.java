@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
 import mouse.shared.messages.clientToServer.ClientToServerMessage;
 import mouse.shared.messages.serverToClient.ServerToClientMessageListener;
 
@@ -18,6 +21,8 @@ public class ServerConnection implements Runnable {
     private final ServerInfo serverInfo;
     private final ClientMessageParser msgParser;
     private Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public ServerConnection(ServerInfo serverInfo) {
         this.serverInfo = serverInfo;
@@ -36,10 +41,20 @@ public class ServerConnection implements Runnable {
             log.error("Unable to create connection socket.", ex);
             System.exit(1);
         }
+        try {
+            this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            log.error("Unable to create ObjectOutputStream for:" + socket.getRemoteSocketAddress().toString());
+        }
+        try {
+            this.objectInputStream = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException ex) {
+            log.error("Unable to create ObjectOutputStream for:" + socket.getRemoteSocketAddress().toString());
+        }
 
         try {
             while (true) {
-                msgParser.parseMessage(socket.getInputStream());
+                msgParser.parseMessage(objectInputStream);
             }
         } catch (IOException e) {
             log.debug("Shutting down connection.");
@@ -53,10 +68,9 @@ public class ServerConnection implements Runnable {
 
     public void sendMessage(ClientToServerMessage m) {
         try {
-            m.writeToStream(socket.getOutputStream());
+            m.writeToStream(objectOutputStream);
         } catch (IOException ex) {
-            log.error("Unable to send message.", ex);
-            System.exit(1);
+            log.error("Unable to write message to server:" + m.getClass().getName());
         }
     }
 }

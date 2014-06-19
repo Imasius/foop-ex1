@@ -1,8 +1,6 @@
 package mouse.shared.messages.clientToServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import mouse.shared.messages.Message;
 import org.slf4j.Logger;
@@ -20,18 +18,20 @@ public abstract class ClientToServerMessage extends Message {
 
     public abstract void alertListeners(Iterable<? extends ClientToServerMessageListener> observers);
 
-    public static ClientToServerMessage fromStream(InputStream stream) {
-        ObjectInput in = null;
+    public static ClientToServerMessage fromStream(ObjectInputStream stream) throws IOException {
+        if (stream == null) {
+            log.error("ObjectInputStream was null. No message read!");
+            throw new IOException("ObjectInputStream was null. No message read!");
+        }
         ClientToServerMessage msg = null;
         try {
-            in = new ObjectInputStream(stream);
-            msg = (ClientToServerMessage) in.readObject();
+            msg = (ClientToServerMessage) stream.readObject();
         } catch (IOException ex) {
             log.error("Unable to deserialize message:", ex);
-            System.exit(1);
+            throw new IOException("Unable to deserialize message:");
         } catch (ClassNotFoundException ex) {
             log.error("Unable to deserialize message:", ex);
-            System.exit(1);
+            throw new IOException("Unable to deserialize message:");
         }
         return msg;
     }

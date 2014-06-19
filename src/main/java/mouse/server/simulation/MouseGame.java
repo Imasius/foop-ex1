@@ -1,9 +1,7 @@
 package mouse.server.simulation;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import mouse.server.network.event.DoorsChangedEvent;
 import mouse.server.network.event.GameOverEvent;
@@ -62,6 +60,7 @@ public class MouseGame implements GameLogicEventListener, ClientToServerMessageL
             ArrayList<Mouse> changed = simulator.simulate(mice, level);
 
             for (Mouse m : changed) {
+                //Test for win condition
                 if (m.getPosition().x == level.getBaitPosition().x && m.getPosition().y == level.getBaitPosition().y) {
                     //Set a new baitPosition
                     boolean found = false;
@@ -81,13 +80,14 @@ public class MouseGame implements GameLogicEventListener, ClientToServerMessageL
                         l.handleLevelChangedEvent(new LevelChangedEvent(level));
                     }
                     return;
-
                 }
             }
             //Notify
-
             for (NotificationEventListener l : listener) {
                 if (changed.size() > 0) {
+                    for (Mouse m : changed) {
+                        //log.debug("Mouse " + m.getPlayerIndex() + " moved to:" + m.getPosition().x + "," + m.getPosition().y);
+                    }
                     l.handleMiceChangedEvent(new MiceChangedEvent(changed));
                 }
                 if (changedDoors.size() > 0) {
@@ -105,6 +105,7 @@ public class MouseGame implements GameLogicEventListener, ClientToServerMessageL
         simulator = new Simulator();
         ArrayList<Mouse> miceUpdateList = new ArrayList<Mouse>();
         for (SimulationMouse m : mice) {
+            //convert to share.Mouse (hide unecessary information)
             miceUpdateList.add(m);
         }
         Iterator<NotificationEventListener> iterator = listener.iterator();

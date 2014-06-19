@@ -136,20 +136,22 @@ public class LevelDrawer implements Drawable {
                             tileContentHeight);
                 }
             }
-
-            // draw starts
             int i = 0;
-            for (Point pos : level.getStartPositions()) {
+            if (level.getStartPositions() != null) {
+                // draw starts
+                i = 0;
+                for (Point pos : level.getStartPositions()) {
 
-                AffineTransform tform = new AffineTransform();
+                    AffineTransform tform = new AffineTransform();
 
-                tform.translate(pos.getX() * tileWidth + START_MARGIN,
-                        pos.getY() * tileHeight + START_MARGIN);
+                    tform.translate(pos.getX() * tileWidth + START_MARGIN,
+                            pos.getY() * tileHeight + START_MARGIN);
 
-                tform.scale((startWidth) / startImgWidth,
-                        (startHeight) / startImgHeight);
+                    tform.scale((startWidth) / startImgWidth,
+                            (startHeight) / startImgHeight);
 
-                args.g2d.drawImage(imgPlayerStart[i++], tform, null);
+                    args.g2d.drawImage(imgPlayerStart[i++], tform, null);
+                }
             }
 
             // draw bait
@@ -166,41 +168,46 @@ public class LevelDrawer implements Drawable {
             }
 
             // draw mice
-            i = 0;
-            for (Mouse mouse : level.getMice()) {
+            if (level.getMice() != null) {
+                log.debug("Draw mice:" + level.getMice().size());
+                //No mice -> dont draw mice
+                i = 0;
+                for (Mouse mouse : level.getMice()) {
 
-                AffineTransform tform = new AffineTransform();
+                    AffineTransform tform = new AffineTransform();
 
-                tform.translate(mouse.getPosition().getX() * tileWidth + MOUSE_MARGIN,
-                        mouse.getPosition().getY() * tileHeight + MOUSE_MARGIN);
+                    tform.translate(mouse.getPosition().getX() * tileWidth + MOUSE_MARGIN,
+                            mouse.getPosition().getY() * tileHeight + MOUSE_MARGIN);
 
-                tform.scale((mouseWidth) / mouseImgWidth,
-                        (mouseHeight) / mouseImgHeight);
+                    tform.scale((mouseWidth) / mouseImgWidth,
+                            (mouseHeight) / mouseImgHeight);
 
-                tform.translate(0.5 * mouseImgWidth,
-                        0.5 * mouseImgHeight);
+                    tform.translate(0.5 * mouseImgWidth,
+                            0.5 * mouseImgHeight);
 
-                switch (mouse.getOrientation()) {
-                    case NORTH:
-                        tform.scale(-1, 1);
-                        tform.rotate(Math.toRadians(90));
-                        break;
-                    case EAST:
-                        tform.scale(-1, 1);
-                        break;
-                    case SOUTH:
-                        tform.rotate(Math.toRadians(270));
-                        break;
-                    case WEST:
-                        tform.rotate(0);
-                        break;
+                    switch (mouse.getOrientation()) {
+                        case NORTH:
+                            tform.scale(-1, 1);
+                            tform.rotate(Math.toRadians(90));
+                            break;
+                        case EAST:
+                            tform.scale(-1, 1);
+                            break;
+                        case SOUTH:
+                            tform.rotate(Math.toRadians(270));
+                            break;
+                        case WEST:
+                            tform.rotate(0);
+                            break;
+                    }
+
+                    tform.translate(-0.5 * mouseImgWidth,
+                            -0.5 * mouseImgHeight);
+
+                    args.g2d.drawImage(imgPlayerMouse[i++], tform, null);
                 }
-
-                tform.translate(-0.5 * mouseImgWidth,
-                        -0.5 * mouseImgHeight);
-
-                args.g2d.drawImage(imgPlayerMouse[i++], tform, null);
             }
+
         }
 
     }

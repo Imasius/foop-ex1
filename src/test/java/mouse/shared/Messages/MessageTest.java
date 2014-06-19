@@ -3,8 +3,13 @@ package mouse.shared.Messages;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import mouse.server.simulation.SimulationLevel;
@@ -156,10 +161,19 @@ public class MessageTest {
     public void testRequestDoorMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        requestDoorStateMsg.writeToStream(out);
+        try {
+            requestDoorStateMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ClientToServerMessage m = ClientToServerMessage.fromStream(in);
+        ClientToServerMessage m = null;
+        try {
+            m = (RequestDoorStateMessage) ClientToServerMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ClientToServerMessageListener> listeners = new ArrayList<ClientToServerMessageListener>();
         listeners.add(clientToServerMessageListener);
@@ -172,10 +186,21 @@ public class MessageTest {
     public void testRequestDoorMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        requestDoorStateMsg.writeToStream(out);
+        try {
+            requestDoorStateMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        RequestDoorStateMessage m = (RequestDoorStateMessage) ClientToServerMessage.fromStream(in);
+        RequestDoorStateMessage m = null;
+
+        try {
+            m = (RequestDoorStateMessage) ClientToServerMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         //CheckIntegrity
         assertEquals(door.getPosition().x, m.getDoor().getPosition().x);
         assertEquals(door.getPosition().y, m.getDoor().getPosition().y);
@@ -187,10 +212,20 @@ public class MessageTest {
     public void testGameStartMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        gameStartMsg.writeToStream(out);
+        try {
+            gameStartMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        ServerToClientMessage m = null;
+        try {
+            m = (GameStartMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);
@@ -203,22 +238,40 @@ public class MessageTest {
     public void testGameStartMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        gameStartMsg.writeToStream(out);
+        try {
+            gameStartMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        GameStartMessage m = (GameStartMessage) ServerToClientMessage.fromStream(in);
-        //CheckIntegrity        
-        //No Data inside, but should be castable
+        GameStartMessage m = null;
+        try {
+            m = (GameStartMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+            //CheckIntegrity
+            //No Data inside, but should be castable
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Test
     public void testGameOverMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        gameOverMsg.writeToStream(out);
+        try {
+            gameOverMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        ServerToClientMessage m = null;
+        try {
+            m = (GameOverMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);
@@ -231,22 +284,40 @@ public class MessageTest {
     public void testGameOverMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        gameOverMsg.writeToStream(out);
+        try {
+            gameOverMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        GameOverMessage m = (GameOverMessage) ServerToClientMessage.fromStream(in);
-        //CheckIntegrity
-        //No Data inside, but should be castable
+        GameOverMessage m = null;
+        try {
+            m = (GameOverMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+            //CheckIntegrity
+            //No Data inside, but should be castable
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Test
     public void testUpdateMiceMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateMiceMsg.writeToStream(out);
+        try {
+            updateMiceMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        ServerToClientMessage m = null;
+        try {
+            m = (UpdateMiceMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);
@@ -261,10 +332,20 @@ public class MessageTest {
     public void testUpdateMiceMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateMiceMsg.writeToStream(out);
+        try {
+            updateMiceMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        UpdateMiceMessage m = (UpdateMiceMessage) ServerToClientMessage.fromStream(in);
+        UpdateMiceMessage m = null;
+
+        try {
+            m = (UpdateMiceMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //CheckIntegrity
         assertEquals(mice.size(), m.getMice().size());
         assertTrue(mice.containsAll(m.getMice()));
@@ -274,10 +355,19 @@ public class MessageTest {
     public void testUpdateDoorsMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateDoorsMsg.writeToStream(out);
+        try {
+            updateDoorsMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        ServerToClientMessage m = null;
+        try {
+            m = (UpdateDoorsMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);
@@ -290,10 +380,19 @@ public class MessageTest {
     public void testUpdateDoorsMessageIntegrity() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateDoorsMsg.writeToStream(out);
+        try {
+            updateDoorsMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        UpdateDoorsMessage m = (UpdateDoorsMessage) ServerToClientMessage.fromStream(in);
+        UpdateDoorsMessage m = null;
+        try {
+            m = (UpdateDoorsMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //CheckIntegrity
         assertEquals(doors.size(), m.getDoors().size());
         assertTrue(doors.containsAll(m.getDoors()));
@@ -303,10 +402,19 @@ public class MessageTest {
     public void testUpdateLevelMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateLevelMsg.writeToStream(out);
+        try {
+            updateLevelMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        ServerToClientMessage m = ServerToClientMessage.fromStream(in);
+        ServerToClientMessage m = null;
+        try {
+            m = (UpdateLevelMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);
@@ -319,10 +427,19 @@ public class MessageTest {
     public void testUpdateLevelIntegrityMessage() {
         //Write Message
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        updateLevelMsg.writeToStream(out);
+        try {
+            updateLevelMsg.writeToStream(new ObjectOutputStream(out));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Read Message
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        UpdateLevelMessage m = (UpdateLevelMessage) ServerToClientMessage.fromStream(in);
+        UpdateLevelMessage m = null;
+        try {
+            m = (UpdateLevelMessage) ServerToClientMessage.fromStream(new ObjectInputStream(in));
+        } catch (IOException ex) {
+            Logger.getLogger(MessageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //HandleMessage
         List<ServerToClientMessageListener> listeners = new ArrayList<ServerToClientMessageListener>();
         listeners.add(serverToClientMessageListener);

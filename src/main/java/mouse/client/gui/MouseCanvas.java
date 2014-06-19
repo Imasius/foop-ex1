@@ -72,7 +72,7 @@ public class MouseCanvas extends Canvas implements MouseListener, ServerToClient
             levelDrawer.draw(args);
             for (int i = 0; i < score.size(); i++) {
                 g2d.setColor(Color.white);
-                g2d.drawString("Player " + i + ":" + score.get(i), 0 + i * 25, 25);
+                g2d.drawString("Player " + i + ":" + score.get(i), 0 + i * 150, 25);
             }
 
         } finally {
@@ -123,10 +123,13 @@ public class MouseCanvas extends Canvas implements MouseListener, ServerToClient
             log.debug("Discarded mice update: No Level");
             return;
         }
+        //Update scores
+//        log.debug("Received UpdateMiceMessage");
         for (Mouse m : mice) {
             if (!score.containsKey(m.getPlayerIndex())) {
                 score.put(m.getPlayerIndex(), 0);
             }
+//            log.debug(">pos:" + m.getPosition().x + "," + m.getPosition().y);
         }
         //Update the data structure
         level.handleUpdateMice(mice);
