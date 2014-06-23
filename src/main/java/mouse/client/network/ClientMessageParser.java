@@ -30,7 +30,6 @@ public class ClientMessageParser extends MessageParser {
     @Override
     public void parseMessage(ObjectInputStream stream) throws IOException {
         if (stream == null) {
-            log.error("Unable to parseMessage, stream was null");
             throw new IOException("Unable to parseMessage, stream was null");
         }
         ServerToClientMessage.fromStream(stream).alertListeners(this.listeners);
