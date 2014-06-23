@@ -19,7 +19,7 @@ import java.io.IOException;
  *
  * @author Kevin Streicher <e1025890@student.tuwien.ac.at>
  */
-public class LevelDrawer implements Drawable {
+public class LevelDrawer {
 
     static final Color COLOR_BORDER = Color.blue;
     static final Color COLOR_EMPTY = Color.white;
