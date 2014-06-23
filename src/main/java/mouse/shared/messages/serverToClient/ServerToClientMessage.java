@@ -24,14 +24,13 @@ public abstract class ServerToClientMessage extends Message {
 
     public static ServerToClientMessage fromStream(ObjectInputStream stream) throws IOException {
         if (stream == null) {
-            log.error("ObjectInputStream was null. No message read!");
             throw new IOException("ObjectInputStream was null. No message read!");
         }
         ServerToClientMessage msg = null;
         try {
             msg = (ServerToClientMessage) stream.readObject();
         } catch (ClassNotFoundException ex) {
-            log.error("Unable to deserialize message.", ex);
+            throw new IOException("Unable to deserialize message:");
         }
         return msg;
     }
