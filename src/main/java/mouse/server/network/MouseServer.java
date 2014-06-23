@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,7 +19,6 @@ import mouse.server.network.event.NotificationEventListener;
 import mouse.server.network.event.PlayerJoinedEvent;
 import mouse.server.network.event.PlayerLeftEvent;
 import mouse.server.simulation.MouseGame;
-import mouse.shared.Mouse;
 import mouse.shared.messages.serverToClient.GameOverMessage;
 import mouse.shared.messages.serverToClient.UpdateDoorsMessage;
 import mouse.shared.messages.serverToClient.UpdateLevelMessage;

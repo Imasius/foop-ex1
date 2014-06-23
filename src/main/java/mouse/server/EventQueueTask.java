@@ -1,7 +1,6 @@
 package mouse.server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
