@@ -15,7 +15,6 @@ public abstract class Message implements Serializable {
 
     public void writeToStream(ObjectOutputStream stream) throws IOException {
         if (stream == null) {
-            log.error("ObjectOutputStream was null. No message send:" + this.getClass().getName());
             throw new IOException("ObjectOutputStream was null. No message send:" + this.getClass().getName());
         }
         ObjectOutput out = null;
@@ -26,7 +25,6 @@ public abstract class Message implements Serializable {
             out.flush();
             stream.reset();
         } catch (IOException ex) {
-            log.error("Unable to serialize message:" + this.getClass().getName() + " skip write", ex);
             throw new IOException("Unable to serialize message:" + this.getClass().getName() + " skip write");
         }
     }
